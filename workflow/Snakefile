@@ -1,0 +1,27 @@
+from snakemake.utils import min_version
+
+min_version("6.15")
+
+
+configfile: "config/config.yaml"
+
+
+scattergather:
+    calling=12,
+    annotation=12,
+
+
+include: "rules/common.smk"
+include: "rules/utils.smk"
+include: "rules/map.smk"
+include: "rules/call.smk"
+include: "rules/annotate.smk"
+include: "rules/filter.smk"
+include: "rules/table.smk"
+include: "rules/plot.smk"
+include: "rules/report.smk"
+
+
+rule all:
+    input:
+        get_all_input,

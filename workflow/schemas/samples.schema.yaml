@@ -1,0 +1,24 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: an entry in the sample sheet
+properties:
+  group:
+    type: string
+    description: group name/identifier (alphanumeric string, that may additionally contain '_' and '-'). One sample can consist of multiple units.
+    pattern: "^[a-zA-Z_0-9-]+$"
+  sample:
+    type: string
+    description: sample name/identifier (alphanumeric string, that may additionally contain '_' and '-')
+    pattern: "^[a-zA-Z_0-9-]+$"
+  platform:
+    type: string
+    enum:
+      - "illumina"
+      - "nanopore"
+    description: sequencing platform
+
+
+required:
+  - group
+  - sample
+  - platform

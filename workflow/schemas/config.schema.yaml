@@ -1,0 +1,92 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+definitions:
+  filterentry:
+    type: object
+    additionalProperties:
+      type: string
+  evententry:
+    type: object
+    properties:
+      varlociraptor:
+        type: array
+        items: 
+          type: string
+      filter:
+        type: string
+      local:
+        type: boolean
+      threshold:
+        type: boolean
+
+
+properties:
+  calling:
+    type: object
+    properties:
+      samples:
+        type: string
+      reference:
+        type: object
+        properties:
+          name:
+            type: string
+          path:
+            type: string
+          n_chromosomes:
+            type: integer
+          species:
+            type: string
+          release:
+            type: integer
+          build:
+            type: string
+        required:
+          - name
+          - species
+          - release
+          - build
+          - n_chromosomes
+      min_read_depth:
+        type: number
+        default: 2
+        minimum: 1
+      min_split_reads:
+        type: number
+        default: 5
+        minimum: 1
+      max_paths_per_component:
+        type: number
+        default: 15
+        minimum: 1
+      max_deletion_length:
+        type: number
+        default: 10000
+        minimum: 1
+      filter:
+        fdr-control:
+            type: object
+            properties:
+              threshold:
+                type: number
+                minimum: 0.0
+                maximum: 1.0
+              local:
+                type: boolean
+              events:
+                $ref: "#/definitions/evententry"
+                description: "a map of <eventname: event> pairs"
+            required:
+              - threshold
+              - events
+    required:
+      - samples
+      - reference
+      - filter
+
+required:
+  - calling

@@ -1,0 +1,8 @@
+spurious_ins_rate: 2.8e-6
+spurious_del_rate: 5.1e-6
+spurious_insext_rate: 0.0
+spurious_delext_rate: 0.0
+spurious_hop_ref_rate: 0.01
+spurious_hop_seq_rate: 0.02
+spurious_hop_ref_ext_rate: 0.05
+spurious_hop_seq_ext_rate: 0.1

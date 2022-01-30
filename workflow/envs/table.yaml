@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - pandas >=1.3.4
+  - pandarallel >=1.5.4
+  - dinopy >=2.2.0

@@ -1,0 +1,10 @@
+samples:
+  nanopore:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+  illumina:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+
+events:
+  present: "nanopore:]0.0,1.0] & illumina:]0.0,1.0]"

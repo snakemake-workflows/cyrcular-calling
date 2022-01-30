@@ -1,0 +1,7 @@
+samples:
+  illumina:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+
+events:
+  present: "illumina:]0.0,1.0]"

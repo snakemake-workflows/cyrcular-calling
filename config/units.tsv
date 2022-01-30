@@ -1,0 +1,3 @@
+sample	unit	fq1	fq2
+Example	0	resources/examples/example_reads.fastq.gz	
+#Example_illumina	0	/path/to/Example_illumina.1.fastq	/path/to/Example_illumina.2.fastq	

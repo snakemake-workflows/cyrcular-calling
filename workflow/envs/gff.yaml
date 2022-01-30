@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bcftools =1.13
+  - pysam
+  - gff3sort
