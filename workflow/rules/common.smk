@@ -66,6 +66,10 @@ def get_all_input(wildcards):
     return targets
 
 
+def pairhmm_mode(wildcards):
+    return "homopolymer" if samples.loc[wildcards.sample]["platform"] == "nanopore" else "exact"
+
+
 def get_group_candidates(wildcards):
     sample = wildcards.sample
     group = samples.loc[sample]["group"]

@@ -70,6 +70,21 @@ rule varlociraptor_call:
         "--scenario {input.scenario} > {output} 2> {log}"
 
 
+rule varlociraptor_alignment_properties:
+    input:
+        ref=config["calling"]["reference"]["path"],
+        ref_idx=config["calling"]["reference"]["path"] + ".fai",
+        bam="results/calling/mapping/{sample}.bam",
+    output:
+        "results/calling/alignment-properties/{sample}.json",
+    log:
+        "logs/varlociraptor/estimate-alignment-properties/{sample}.log",
+    conda:
+        "../envs/varlociraptor.yaml"
+    shell:
+        "varlociraptor estimate alignment-properties {input.ref} --bam {input.bam} > {output} 2> {log}"
+
+
 rule varlociraptor_preprocess:
     input:
         ref=config["calling"]["reference"]["path"],
@@ -77,10 +92,11 @@ rule varlociraptor_preprocess:
         candidates=get_group_candidates,
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
+        alignment_props="results/calling/alignment-properties/{sample}.json",
     output:
         "results/calling/calls/observations/{sample}.{scatteritem}.bcf",
     params:
-        model="resources/error_rates/nanopore.yaml",
+        mode=pairhmm_mode,
     log:
         "logs/varlociraptor/preprocess/{sample}.{scatteritem}.log",
     benchmark:
@@ -93,8 +109,9 @@ rule varlociraptor_preprocess:
     shell:
         "varlociraptor preprocess variants {input.ref} "
         "--candidates {input.candidates} "
-        "--model {params.model} "
         "--max-depth 200 "
+        "--alignment-properties {input.alignment_props} "
+        "--pairhmm-mode {params.mode} "
         "--bam {input.bam} --output {output} 2> {log}"
 
 
