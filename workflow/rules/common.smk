@@ -61,8 +61,8 @@ def get_all_input(wildcards):
     targets += expand(
         "results/calling/tables/{group}.sorted.annotated.csv", group=GROUPS
     )
-    targets += expand("results/calling/coverage_graphs/{group}/", group=GROUPS)
-    targets += expand("results/calling/report/tables/{group}", group=GROUPS)
+    targets += ["results/datavzrd-report/all.fdr-controlled"]
+    targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
     return targets
 
 
