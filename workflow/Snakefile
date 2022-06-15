@@ -19,8 +19,7 @@ include: "rules/annotate.smk"
 include: "rules/filter.smk"
 include: "rules/table.smk"
 include: "rules/plot.smk"
-include: "rules/report.smk"
-
+include: "rules/datavzrd.smk"
 
 rule all:
     input:
