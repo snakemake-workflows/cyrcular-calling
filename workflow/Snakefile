@@ -21,6 +21,7 @@ include: "rules/table.smk"
 include: "rules/plot.smk"
 include: "rules/datavzrd.smk"
 
+
 rule all:
     input:
         get_all_input,

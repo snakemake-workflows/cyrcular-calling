@@ -25,28 +25,33 @@ def sort_table(df: pd.DataFrame):
 
 def main(snakemake):
     df = pd.read_csv(snakemake.input.tsv, sep="\t")
+    columns = [
+        "graph",
+        "EVENT",
+        "CHROM",
+        "start",
+        "OTHER_CHROM",
+        "stop",
+        "ALT",
+        "direction",
+        "circle_length",
+        "num_segments",
+        "split_reads",
+        "AF_nanopore",
+        "PROB_PRESENT",
+        "PROB_ABSENT",
+        "PROB_ARTIFACT",
+        "length",
+        "NUM_EXONS",
+        "GENES",
+    ]
+    # if there are no entries, make sure an entry table with the correct header is written anyways
     if df.empty:
-        df = pd.DataFrame(
-            columns=[
-                "EVENT",
-                "ID",
-                "CHROM",
-                "POS",
-                "ALT",
-                "circle_length",
-                "num_segments",
-                "split_reads",
-                "NUM_EXONS",
-                "GENES",
-                "AF_nanopore",
-                "PROB_PRESENT",
-                "PROB_ABSENT",
-                "PROB_ARTIFACT",
-            ]
-        )
+        df = pd.DataFrame(columns=columns)
         df.to_csv(snakemake.output.csv, index=False)
         return
 
+    # the list of genes may be too long for excel spreadsheets, hence we split the column into multiple ones
     # from https://stackoverflow.com/questions/58645152/splitting-a-long-string-in-pandas-cell-near-the-n-th-character-position-into-mul
     limit = 32767 - 1
     sep = ";"
@@ -88,12 +93,18 @@ def main(snakemake):
     df[new_cols] = df[new_cols].apply(lambda s: s.str.strip(sep))
     del df["GENES"]
     df.rename(columns=dict(GENES_1="GENES"), inplace=True)
+    gene_cols = [c for c in df.columns if c.startswith("GENES")]
 
     df = sort_table(df)
 
     df.drop_duplicates(
         subset=["EVENT", "CHROM", "start", "OTHER_CHROM", "stop"], inplace=True
     )
+
+    df["graph"] = [re.sub(r"_circle_.*", "", d) for d in df["EVENT"]]
+
+    # reorder columns
+    df = df[columns[:-1] + gene_cols]
 
     df.to_csv(snakemake.output.csv, index=False, sep=",")
 

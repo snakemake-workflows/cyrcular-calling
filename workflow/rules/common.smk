@@ -63,11 +63,16 @@ def get_all_input(wildcards):
     )
     targets += ["results/datavzrd-report/all.fdr-controlled"]
     targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
+    targets += expand("results/tmp/{group}.graph_plots.marker", group=GROUPS)
     return targets
 
 
 def pairhmm_mode(wildcards):
-    return "homopolymer" if samples.loc[wildcards.sample]["platform"] == "nanopore" else "exact"
+    if samples.loc[wildcards.sample]["platform"] == "nanopore":
+        mode = "homopolymer"
+    else:
+        mode = "exact"
+    return mode
 
 
 def get_group_candidates(wildcards):
