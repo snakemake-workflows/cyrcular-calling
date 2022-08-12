@@ -45,7 +45,7 @@ def main(snakemake):
         "NUM_EXONS",
         "GENES",
     ]
-    # if there are no entries, make sure an entry table with the correct header is written anyways
+    # if there are no entries, make sure an empty table with the correct header is written anyways
     if df.empty:
         df = pd.DataFrame(columns=columns)
         df.to_csv(snakemake.output.csv, index=False)
