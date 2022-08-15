@@ -25,16 +25,11 @@ rule circle_coverage_plot:
         2> {log}"""
 
 
-rule circle_graph_plot:
+rule circle_graph_plots:
     input:
         graph="results/calling/graphs/{sample}",
     output:
-        pdf_dir=directory("results/calling/graphs/pdfs/{sample}"),
-        pdf=report(
-            "results/calling/graphs/{sample}.pdf",
-            category="Graphs",
-            subcategory="{sample}",
-        ),
+        pdf_dir=directory("results/calling/graphs/rendered/{sample}"),
     log:
         "logs/graphviz/{sample}.log",
     conda:
@@ -44,10 +39,5 @@ rule circle_graph_plot:
         """
         mkdir -p {output.pdf_dir}
         count=`ls -1 {input.graph}/ 2>{log} | wc -l`
-        if [ $count != 0 ]; then
-            for f in {input.graph}/*.dot; do (dot $f -Tpdf > "{output.pdf_dir}/${{f##*/}}.pdf" 2>>{log}); done
-            convert {output.pdf_dir}/*.pdf {output.pdf} 2>> {log}
-        else
-            convert xc:none -page 2x2 {output.pdf} 2>> {log}
-        fi
+        for f in {input.graph}/*.dot; do (dot $f -Tpdf > "{output.pdf_dir}/graph_$(basename ${{f}} .dot).pdf" 2>>{log}); done
         """
