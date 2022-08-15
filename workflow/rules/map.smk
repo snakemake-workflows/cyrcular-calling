@@ -44,15 +44,14 @@ rule merge_fastqs:
         "logs/merge-fastqs/{sample}_{read}.log",
     wildcard_constraints:
         read="single|R1|R2",
-    run:
-        gzipped = any(map(lambda f: f.endswith(".gz"), input.fastqs))
-        if len(input.fastqs) == 1 and gzipped:
-            shell("ln {input.fastqs[0]} {output}")
-        else:
-            if gzipped:
-                shell("pigz -dc {input.fastqs} | pigz -c > {output} 2> {log}")
-            else:
-                shell("cat {input.fastqs} | pigz -c > {output} 2> {log}")
+    params:
+        cmd=lambda wc: "pigz -dc"
+        if (any(map(lambda f: f.endswith(".gz"), get_fastqs(wc))))
+        else "cat",
+    conda:
+        "../envs/pigz.yaml"
+    shell:
+        """{params.cmd} {input.fastqs} | pigz -c > {output} 2> {log}"""
 
 
 rule samtools_index:

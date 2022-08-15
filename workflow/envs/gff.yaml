@@ -5,3 +5,4 @@ dependencies:
   - bcftools =1.13
   - pysam
   - gff3sort
+  - pigz =2.6

@@ -1,4 +1,4 @@
 channels:
   - conda-forge
 dependencies:
-  - varlociraptor =5.2.0
+  - datavzrd =1.16
