@@ -257,3 +257,21 @@ BND_RE = re.compile(r""".*([]\[])((?P<seqname>.+):(?P<position>[0-9]+))([]\[])?.
 
 def parse_bnd_alt(s: str):
     return BND_RE.search(s)["seqname"], int(BND_RE.search(s)["position"])
+
+
+## rules/annotation.smk specific
+CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
+
+
+def copy_annotation_table_expr():
+    return "CHROM,POS,ID,REF,ALT," + ",".join(
+        map(lambda s: f"INFO['{s}']", CYRCULAR_INFO_FIELDS)
+    )
+
+
+def copy_annotation_vembrane_header_expr():
+    return "CHROM,POS,ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS)
+
+
+def copy_annotation_bcftools_annotate_columns():
+    return "CHROM,POS,~ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS)

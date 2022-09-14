@@ -26,11 +26,15 @@ rule copy_qc_plots_for_datavzrd:
         output_dir=lambda wc: directory(
             f"results/datavzrd-report/all.fdr-controlled/circles-{wc.group}/qc_plots"
         ),
+    log:
+        "logs/datavzrd/copy_qc_plots/{group}.log",
+    conda:
+        "../envs/bash.yaml"
     shell:
         """
-        mkdir -p {params.output_dir}
+        mkdir -p {params.output_dir} 2> {log}
         for f in `find {input.plots} -regex '.*/graph_[0-9]+_[0-9]+\.html'`; do ( cp "$f" {params.output_dir} ); done
-        touch {output.marker}
+        touch {output.marker} 2>> {log}
         """
 
 
@@ -44,6 +48,10 @@ rule copy_graph_plots_for_datavzrd:
         output_dir=lambda wc: directory(
             f"results/datavzrd-report/all.fdr-controlled/circles-{wc.group}/graphs"
         ),
+    log:
+        "logs/datavzrd/copy_graph_plots/{group}.log",
+    conda:
+        "../envs/bash.yaml"
     shell:
         """
         mkdir -p {params.output_dir}
