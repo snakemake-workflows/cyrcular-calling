@@ -1,29 +1,53 @@
+CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
+
+
+rule extract_vcf_header_lines_for_bcftools_annotate:
+    input:
+        vcf="results/calling/candidates/{sample}.sorted.bcf",
+    output:
+        header=temp("results/calling/annotation/{sample}.header_lines.txt"),
+    params:
+        fields="|".join(CYRCULAR_INFO_FIELDS),
+    conda:
+        "../envs/vcf_annotate.yaml"
+    log:
+        "logs/re-annotate/header_{sample}.log",
+    shell:
+        """
+        bcftools view -h {input.vcf} | rg {params.fields:q} > {output.header} 2> {log}
+        """
+
+
 rule copy_annotation_from_cyrcular:
     input:
         variants="results/calling/calls/pre_annotated/{sample}.bcf",
         variants_index="results/calling/calls/pre_annotated/{sample}.bcf.csi",
         candidates_with_annotation="results/calling/candidates/{sample}.sorted.bcf",
         candidates_with_annotation_index="results/calling/candidates/{sample}.sorted.bcf.csi",
+        header_lines="results/calling/annotation/{sample}.header_lines.txt",
     output:
         variants="results/calling/calls/annotated/{sample}.bcf",
+        annotation=temp("results/calling/candidates/{sample}.sorted.bcf.tab"),
+        annotation_bgzip=temp("results/calling/candidates/{sample}.sorted.bcf.tab.bgz"),
+        annotation_bgzip_tabix=temp(
+            "results/calling/candidates/{sample}.sorted.bcf.tab.bgz.tbi"
+        ),
     log:
         "logs/re-annotate/{sample}.log",
     benchmark:
         "benchmarks/re-annotate/{sample}.txt"
     conda:
-        "../envs/bcftools.yaml"
+        "../envs/vcf_annotate.yaml"
     params:
-        columns=",".join(
-            [
-                "INFO/CircleLength",
-                "INFO/CircleSegmentCount",
-                "INFO/SplitReads",
-                "INFO/Support",
-            ]
-        ),
+        header="CHROM,POS,ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS),
+        table_expr="CHROM,POS,ID,REF,ALT," + ",".join(map(lambda s: "INFO['" + s + "']", CYRCULAR_INFO_FIELDS)),
+        columns="CHROM,POS,~ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS),
     shell:
         """
-        bcftools annotate --annotations {input.candidates_with_annotation} --columns {params.columns} --output-type b --output {output.variants} {input.variants}
+        vembrane table --header {params.header:q} {params.table_expr:q} {input.candidates_with_annotation} > {output.annotation} 2> {log}
+        bgzip -c {output.annotation} > {output.annotation_bgzip} 2>> {log}
+        tabix -p vcf --zero-based -S 1 -f {output.annotation_bgzip} 2>> {log}
+        bcftools annotate --header-lines {input.header_lines} --annotations {output.annotation_bgzip} --columns {params.columns} --output-type b --output {output.variants} {input.variants}  2>> {log}
         """
 
 

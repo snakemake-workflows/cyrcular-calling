@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bcftools =1.15
+  - htslib =1.15
+  - vembrane =0.12
+  - ripgrep =13.0
