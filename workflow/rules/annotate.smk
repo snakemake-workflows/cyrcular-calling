@@ -1,6 +1,3 @@
-CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
-
-
 rule extract_vcf_header_lines_for_bcftools_annotate:
     input:
         vcf="results/calling/candidates/{sample}.sorted.bcf",
@@ -39,9 +36,9 @@ rule copy_annotation_from_cyrcular:
     conda:
         "../envs/vcf_annotate.yaml"
     params:
-        header="CHROM,POS,ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS),
-        table_expr="CHROM,POS,ID,REF,ALT," + ",".join(map(lambda s: "INFO['" + s + "']", CYRCULAR_INFO_FIELDS)),
-        columns="CHROM,POS,~ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS),
+        header=copy_annotation_vembrane_header_expr(),
+        table_expr=copy_annotation_table_expr(),
+        columns=copy_annotation_bcftools_annotate_columns(),
     shell:
         """
         vembrane table --header {params.header:q} {params.table_expr:q} {input.candidates_with_annotation} > {output.annotation} 2> {log}
