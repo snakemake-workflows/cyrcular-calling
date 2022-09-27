@@ -58,10 +58,8 @@ units = read_units()
 
 def get_all_input(wildcards):
     targets = []
-    targets += expand(
-        "results/calling/tables/{group}.sorted.annotated.csv", group=GROUPS
-    )
     targets += ["results/datavzrd-report/all.fdr-controlled"]
+    targets += expand("results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS)
     targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
     targets += expand("results/tmp/{group}.graph_plots.marker", group=GROUPS)
     return targets

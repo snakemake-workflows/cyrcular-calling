@@ -1,20 +1,27 @@
+from pathlib import Path
+
 rule render_datavzrd_config:
     input:
         template=workflow.source_path(
             "../resources/datavzrd/circle-table-template.datavzrd.yaml"
         ),
+        overview_tables=[
+            (group, f"results/calling/tables/{group}/{group}_overview.tsv") for group in GROUPS
+        ],
+        detail_tables=[
+            (group, f"results/calling/tables/{group}/{group}_details/") for group in GROUPS
+        ],
     output:
         "resources/datavzrd/all.datavzrd.yaml",
     params:
         groups=lambda wc: GROUPS,
-        calls=lambda wc: [
-            f"results/calling/tables/{group}.sorted.annotated.csv" for group in GROUPS
-        ],
     log:
         "logs/datavzrd_render/all.log",
     template_engine:
         "yte"
 
+#        overview="results/calling/tables/{group}/{group}_overview.tsv",
+#        details=directory("results/calling/tables/{group}/{group}_details/"),
 
 rule copy_qc_plots_for_datavzrd:
     input:
