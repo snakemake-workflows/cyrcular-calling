@@ -2,18 +2,18 @@ name: Circle calls
 
 __definitions__:
   - | 
-    event_link = f"""
+    circle_qc_plot_link = f"""
     function(value, row) {{
       var filename = value.replace("_circle_", "_");
-      var link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/${{filename}}.html' target='_blank'>${{value}}</a>`;
+      var link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/graph_${{filename}}.html' target='_blank'>${{value}}</a>`;
       return link;
     }}
     """
   - | 
     graph_link = f"""
     function(value, row) {{
-      var filename = value;
-      var link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/${{filename}}.pdf' target='_blank'>${{value}}</a>`;
+      var graph_id = value;
+      var link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/graph_${{graph_id}}.pdf' target='_blank'>${{value}}</a>`;
       return link;
     }}
     """
@@ -44,42 +44,59 @@ __definitions__:
         return link;
     }}
     """
+?from pathlib import Path
 
 datasets:
-  ?for group, path in zip(params.groups, params.calls):
-    ?f"{group}-circles":
+  ?for group, path in input.overviews:
+    ?f"data-{group}-circles":
       path: ?path
-      separator: ","
+      separator: "\t"
+      links:
+        circle-details:
+          column: event_id
+          view: "detail-{value}-segments"
+  ?for group, circle, path in input.details:
+    ?circle = Path(path).stem
+    f"data-{group}-{circle}-segments":
+      path: ?path
+      separator: "\t"
 
 views:
   ?for group in params.groups:
     ?f"circles-{group}":
       desc: |
         Overview table showing all discovered circles for a group.
-      dataset: ?f"{group}-circles"
+      dataset: ?f"data-{group}-circles"
       render-table:
-        direction:
-          display-mode: hidden
-        "regex('AF_(.+)')":
-          plot: 
-            ticks:
-              scale: "linear"
-              domain: [0.0, 1.0]
-              aux-domain-columns:
-                - "regex('AF_(.+)')"
+        "graph_id":
+          custom: ?graph_link
+        "circle_id":
+          custom: ?circle_qc_plot_link
         "circle_length":
           plot: 
             ticks:
               scale: "linear"
               aux-domain-columns:
                 - "circle_length"
-        "length":
+        "segment_count":
           plot: 
             ticks:
               scale: "linear"
               aux-domain-columns:
-                - "length"
-        "regex('PROB_(.+)')":
+                - "segment_count"
+        "score":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "score"
+        "num_split_reads":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "num_split_reads"
+        "regex('prob_(.+)')":
           plot:
             heatmap:
               scale: linear
@@ -87,14 +104,69 @@ views:
               range:
                 - white
                 - "#c1d7a8"
-        "GENES":
+        "gene_names":
           custom: ?gene_link
-        "breakpoint_seq":
-          custom: ?breakpoint_link
-        "EVENT":
-          custom: ?event_link
-        "graph":
-          custom: ?graph_link
-        "NUM_EXONS":
-          display-mode: hidden
+        "gene_ids":
+          ellipsis: 16
+        "num_exons":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "num_exons"
+        "regex('af_(.+)')":
+          plot: 
+            ticks:
+              scale: "linear"
+              domain: [0.0, 1.0]
+              aux-domain-columns:
+                - "regex('af_(.+)')"
 
+?for group, circle, _ in params.details:
+    ?f"detail-{group}-{circle}-segments":
+      desc: |
+        Detail table containing all covered segments and circle junctions for a circle
+      dataset: ?f"data-{group}-{circle}-segments"
+      render-table:
+        "circle_length":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "circle_length"
+        "segment_count":
+          display: hidden
+        "score":
+          display: hidden
+        "kind":
+          plot:
+            heatmap:
+              scale: ordinal
+              color-scheme: accent
+        "length":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "length"
+        "num_exons":
+          plot: 
+            ticks:
+              scale: "linear"
+              aux-domain-columns:
+                - "num_exons"
+        "coverage":
+          plot: 
+            ticks:
+              scale: "sqrt"
+              aux-domain-columns:
+                - "coverage"
+        "num_split_reads": 
+          plot:
+            ticks:
+              scale: "sqrt"
+              aux-domain-columns:
+                - "num_split_reads"
+        "breakpoint_sequence":
+          ellipsis: 32
+        
