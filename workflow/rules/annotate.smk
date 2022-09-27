@@ -1,3 +1,26 @@
+## annotate genes, exons and breakpoint sequences; produce one overview table containing circles, and one table with details of each segment for each circle 
+
+rule cyrcular_annotate:
+    input:
+        reference=config["calling"]["reference"]["path"],
+        graph="results/calling/graphs/{group}.graph",
+        bcf="results/calling/calls/filtered/{group}.bcf",
+        annotation="resources/gencode.annotation.sorted.gff3.gz",
+    output:
+        overview="results/calling/tables/{group}/{group}_overview.tsv",
+        details=directory("results/calling/tables/{group}/{group}_details/"),
+    threads: 1
+    params:
+    log:
+        "logs/cyrcular_annotate/{group}.log",
+    benchmark:
+        "benchmarks/cyrcular_annotate/{group}.txt"
+    conda:
+        "../envs/cyrcular.yaml"
+    shell:
+        """cyrcular graph annotate {input.graph} {input.bcf} --reference {input.reference} --annotation {input.annotation} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
+
+
 rule extract_vcf_header_lines_for_bcftools_annotate:
     input:
         vcf="results/calling/candidates/{sample}.sorted.bcf",
@@ -17,8 +40,8 @@ rule extract_vcf_header_lines_for_bcftools_annotate:
 
 rule copy_annotation_from_cyrcular:
     input:
-        variants="results/calling/calls/pre_annotated/{sample}.bcf",
-        variants_index="results/calling/calls/pre_annotated/{sample}.bcf.csi",
+        variants="results/calling/calls/merged/{sample}.bcf",
+        variants_index="results/calling/calls/merged/{sample}.bcf.csi",
         candidates_with_annotation="results/calling/candidates/{sample}.sorted.bcf",
         candidates_with_annotation_index="results/calling/candidates/{sample}.sorted.bcf.csi",
         header_lines="results/calling/annotation/{sample}.header_lines.txt",
@@ -48,40 +71,23 @@ rule copy_annotation_from_cyrcular:
         """
 
 
-rule annotate_genes:
-    input:
-        annotation="resources/gencode.v38.annotation.sorted.gff3.gz",
-        variants="results/calling/calls/merged/{sample}.bcf",
-    output:
-        variants="results/calling/calls/pre_annotated/{sample}.bcf",
-    threads: 1
-    log:
-        "logs/annotate_genes/{sample}.log",
-    benchmark:
-        "benchmarks/annotate_genes/{sample}.txt"
-    conda:
-        "../envs/gff.yaml"
-    script:
-        "../scripts/gff_annotate.py"
-
-
 rule sort_annotation:
     input:
-        "resources/gencode.v38.annotation.gff3.gz",
+        gff="resources/gencode.annotation.gff3.gz",
     output:
-        gff="resources/gencode.v38.annotation.sorted.gff3.gz",
-        tbi="resources/gencode.v38.annotation.sorted.gff3.gz.tbi",
-        csi="resources/gencode.v38.annotation.sorted.gff3.gz.csi",
+        gff="resources/gencode.annotation.sorted.gff3.gz",
+        tbi="resources/gencode.annotation.sorted.gff3.gz.tbi",
+        csi="resources/gencode.annotation.sorted.gff3.gz.csi",
     conda:
         "../envs/gff.yaml"
     log:
-        "logs/sort_annotation/gencode.v38.annotation.gff3.log",
+        "logs/sort_annotation/gencode.annotation.gff3.log",
     benchmark:
-        "benchmarks/sort_annotation/gencode.v38.annotation.gff3.txt"
+        "benchmarks/sort_annotation/gencode.annotation.gff3.txt"
     threads: 48
     shell:
         """
-        gff3sort.pl <(pigz -dc {input}) | bgzip -@ {threads} -c > {output.gff} 2> {log}
+        gff3sort.pl <(pigz -dc {input.gff}) | bgzip -@ {threads} -c > {output.gff} 2> {log}
         tabix {output.gff} 2>> {log}
         tabix --csi {output.gff} 2>> {log}
         """
