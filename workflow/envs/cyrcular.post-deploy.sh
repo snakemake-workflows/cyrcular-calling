@@ -1,1 +1,1 @@
-cargo install --git https://github.com/tedil/cyrcular.git --branch main --rev ec9fc44682134fad6cc3730eacfe3860cacf6dc3 --locked
+cargo install --git https://github.com/tedil/cyrcular.git --branch annotate --rev 9ddd0ddf9574d05b418e83c70eea687d5228fb1c --locked
