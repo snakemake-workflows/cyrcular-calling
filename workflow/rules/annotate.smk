@@ -89,13 +89,15 @@ rule sort_annotation:
 
 rule download_annotation:
     output:
-        "resources/gencode.v38.annotation.gff3.gz",
+        "resources/gencode.annotation.gff3.gz",
     log:
-        "logs/download_annotation/gencode.v38.annotation.gff3.log",
+        "logs/download_annotation.log",
+    params:
+        release=get_annotation_release,
     benchmark:
-        "benchmarks/download_annotation/gencode.v38.annotation.gff3.txt"
+        "benchmarks/download_annotation.txt"
     cache: True
     conda:
         "../envs/wget.yaml"
     shell:
-        """wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gff3.gz --no-check-certificate -O {output} 2> {log}"""
+        """wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_{params.release}/gencode.v{params.release}.annotation.gff3.gz --no-check-certificate -O {output} 2> {log}"""
