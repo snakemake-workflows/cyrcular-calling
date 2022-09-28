@@ -4,7 +4,7 @@ rule cyrcular_annotate:
     input:
         reference=config["calling"]["reference"]["path"],
         graph="results/calling/graphs/{group}.graph",
-        bcf="results/calling/calls/filtered/{group}.bcf",
+        bcf="results/calling/calls/filtered/reheader/{group}.bcf",
         annotation="resources/gencode.annotation.sorted.gff3.gz",
     output:
         overview="results/calling/tables/{group}/{group}_overview.tsv",
@@ -19,6 +19,66 @@ rule cyrcular_annotate:
         "../envs/cyrcular.yaml"
     shell:
         """cyrcular graph annotate {input.graph} {input.bcf} --reference {input.reference} --annotation {input.annotation} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
+
+
+rule reheader_filtered_bcf:
+    input:
+        bcf="results/calling/calls/filtered/{group}.bcf",
+        sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
+    output:
+        bcf="results/calling/calls/filtered/reheader/{group}.bcf",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        """
+        bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
+        """
+
+rule sort_bcf_header:
+    input:
+        bcf="results/calling/calls/filtered/{group}.bcf",
+        header="results/calling/calls/filtered/{group}.header.txt",
+    output:
+        sorted_header=temp("results/calling/calls/filtered/reheader/{group}.header.sorted.txt"),
+    run:
+        with open(input.header, 'rt') as header_file:
+            header = header_file.readlines()
+            file_format_line = header[0]
+            chrom_line = header[-1]
+            other_lines = header[1:-1]
+            kinds = ["fileDate", "source", "reference", "contig", "phasing", "FILTER", "INFO", "FORMAT", "ALT", "assembly", "META", "SAMPLE", "PEDIGREE", "pedigreeDB"]
+            categories = {kind: [] for kind in kinds}
+            others = []
+            for line in other_lines:
+                if "=" in line:
+                    kind = line.split("=")[0].lstrip("#")
+                    group = categories.get(kind, others)
+                else:
+                    group = others    
+                group.append(line)
+
+            with open(output, 'wt') as out:
+                print(file_format_line, file=out)
+                for kind in kinds:
+                    lines = categories[kind]
+                    for line in lines:
+                        print(line, file=out)
+                for line in others:
+                    print(line, file=out)
+
+
+rule get_bcf_header:
+    input:
+        bcf="{file}.bcf",
+    output:
+        header="{file}.header.txt",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        """
+        bcftools view -h {input.bcf} > {output.header}
+        """
+
 
 
 rule extract_vcf_header_lines_for_bcftools_annotate:
