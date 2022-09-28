@@ -59,7 +59,9 @@ units = read_units()
 def get_all_input(wildcards):
     targets = []
     targets += ["results/datavzrd-report/all.fdr-controlled"]
-    targets += expand("results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS)
+    targets += expand(
+        "results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS
+    )
     targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
     targets += expand("results/tmp/{group}.graph_plots.marker", group=GROUPS)
     return targets
@@ -276,4 +278,4 @@ def copy_annotation_bcftools_annotate_columns():
 
 
 def get_annotation_release(wildcards):
-    return config['calling']['reference'].get('annotation', {}).get('release', '38')
+    return config["calling"]["reference"].get("annotation", {}).get("release", "38")

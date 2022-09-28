@@ -1,4 +1,5 @@
-## annotate genes, exons and breakpoint sequences; produce one overview table containing circles, and one table with details of each segment for each circle 
+## annotate genes, exons and breakpoint sequences; produce one overview table containing circles, and one table with details of each segment for each circle
+
 
 rule cyrcular_annotate:
     input:
@@ -10,7 +11,6 @@ rule cyrcular_annotate:
         overview="results/calling/tables/{group}/{group}_overview.tsv",
         details=directory("results/calling/tables/{group}/{group}_details/"),
     threads: 1
-    params:
     log:
         "logs/cyrcular_annotate/{group}.log",
     benchmark:
@@ -37,6 +37,7 @@ rule reheader_filtered_bcf:
         cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf}
         """
 
+
 rule sort_bcf_header:
     input:
         bcf="results/calling/calls/filtered/{group}.bcf",
@@ -44,12 +45,27 @@ rule sort_bcf_header:
     output:
         sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
     run:
-        with open(input.header, 'rt') as header_file:
+        with open(input.header, "rt") as header_file:
             header = [l.strip() for l in header_file.readlines()]
             file_format_line = header[0]
             chrom_line = header[-1]
             other_lines = header[1:-1]
-            kinds = ["fileDate", "source", "reference", "contig", "phasing", "FILTER", "INFO", "FORMAT", "ALT", "assembly", "META", "SAMPLE", "PEDIGREE", "pedigreeDB"]
+            kinds = [
+                "fileDate",
+                "source",
+                "reference",
+                "contig",
+                "phasing",
+                "FILTER",
+                "INFO",
+                "FORMAT",
+                "ALT",
+                "assembly",
+                "META",
+                "SAMPLE",
+                "PEDIGREE",
+                "pedigreeDB",
+            ]
             categories = {kind: [] for kind in kinds}
             others = []
             for line in other_lines:
@@ -57,10 +73,10 @@ rule sort_bcf_header:
                     kind = line.split("=")[0].lstrip("#")
                     group = categories.get(kind, others)
                 else:
-                    group = others    
+                    group = others
                 group.append(line)
 
-            with open(output.sorted_header, 'wt') as out:
+            with open(output.sorted_header, "wt") as out:
                 print(file_format_line, file=out)
                 for kind in kinds:
                     lines = categories[kind]
@@ -82,7 +98,6 @@ rule get_bcf_header:
         """
         bcftools view -h {input.bcf} > {output.header}
         """
-
 
 
 rule extract_vcf_header_lines_for_bcftools_annotate:
