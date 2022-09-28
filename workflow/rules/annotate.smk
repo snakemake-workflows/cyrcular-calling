@@ -30,8 +30,11 @@ rule reheader_filtered_bcf:
     conda:
         "../envs/bcftools.yaml"
     shell:
+        ## bcftools re-header seems to re-order entries
+        # bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
+        ## so we have to re-header ourselves
         """
-        bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
+        cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf}
         """
 
 rule sort_bcf_header:
@@ -39,10 +42,10 @@ rule sort_bcf_header:
         bcf="results/calling/calls/filtered/{group}.bcf",
         header="results/calling/calls/filtered/{group}.header.txt",
     output:
-        sorted_header=temp("results/calling/calls/filtered/reheader/{group}.header.sorted.txt"),
+        sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
     run:
         with open(input.header, 'rt') as header_file:
-            header = header_file.readlines()
+            header = [l.strip() for l in header_file.readlines()]
             file_format_line = header[0]
             chrom_line = header[-1]
             other_lines = header[1:-1]
@@ -57,7 +60,7 @@ rule sort_bcf_header:
                     group = others    
                 group.append(line)
 
-            with open(output, 'wt') as out:
+            with open(output.sorted_header, 'wt') as out:
                 print(file_format_line, file=out)
                 for kind in kinds:
                     lines = categories[kind]
@@ -65,6 +68,7 @@ rule sort_bcf_header:
                         print(line, file=out)
                 for line in others:
                     print(line, file=out)
+                print(chrom_line, file=out)
 
 
 rule get_bcf_header:
