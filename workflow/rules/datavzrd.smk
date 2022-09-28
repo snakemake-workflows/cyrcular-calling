@@ -6,18 +6,14 @@ rule render_datavzrd_config:
         template=workflow.source_path(
             "../resources/datavzrd/circle-table-template.datavzrd.yaml"
         ),
-        overview_tables=[
-            (group, f"results/calling/tables/{group}/{group}_overview.tsv")
-            for group in GROUPS
-        ],
-        detail_tables=[
-            (group, f"results/calling/tables/{group}/{group}_details/")
-            for group in GROUPS
-        ],
+        overview_tables=expand("results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS),
+        detail_tables=[f"results/calling/tables/{group}/{group}_details/" for group in GROUPS],
     output:
-        "resources/datavzrd/all.datavzrd.yaml",
+        "results/datavzrd/all.datavzrd.yaml",
     params:
         groups=lambda wc: GROUPS,
+        overview_tables=[(group, f"results/calling/tables/{group}/{group}_overview.tsv") for group in GROUPS],
+        detail_tables=[(group, Path(path).stem.split("_")[1] + "-" + Path(path).stem.split("_")[3], f"results/calling/tables/{group}/{group}_details/{path}") for group in GROUPS for path in os.listdir(f"results/calling/tables/{group}/{group}_details/") if path.endswith(".tsv")],
     log:
         "logs/datavzrd_render/all.log",
     template_engine:
@@ -74,10 +70,9 @@ rule copy_graph_plots_for_datavzrd:
 
 rule datavzrd_circle_calls:
     input:
-        config="resources/datavzrd/all.datavzrd.yaml",
-        calls=expand(
-            "results/calling/tables/{group}.sorted.annotated.csv", group=GROUPS
-        ),
+        config="results/datavzrd/all.datavzrd.yaml",
+        overview_tables=expand("results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS),
+        detail_tables=expand("results/calling/tables/{group}/{group}_details/", group=GROUPS),
     output:
         report(
             directory("results/datavzrd-report/all.fdr-controlled"),

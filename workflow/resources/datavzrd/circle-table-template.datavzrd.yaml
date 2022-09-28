@@ -44,10 +44,9 @@ __definitions__:
         return link;
     }}
     """
-?from pathlib import Path
 
 datasets:
-  ?for group, path in input.overviews:
+  ?for group, path in params.overview_tables:
     ?f"data-{group}-circles":
       path: ?path
       separator: "\t"
@@ -55,9 +54,8 @@ datasets:
         circle-details:
           column: event_id
           view: "detail-{value}-segments"
-  ?for group, circle, path in input.details:
-    ?circle = Path(path).stem
-    f"data-{group}-{circle}-segments":
+  ?for group, circle, path in params.detail_tables:
+    ?f"data-{group}-{circle}-segments":
       path: ?path
       separator: "\t"
 
@@ -122,7 +120,7 @@ views:
               aux-domain-columns:
                 - "regex('af_(.+)')"
 
-?for group, circle, _ in params.details:
+  ?for group, circle, _ in params.detail_tables:
     ?f"detail-{group}-{circle}-segments":
       desc: |
         Detail table containing all covered segments and circle junctions for a circle
