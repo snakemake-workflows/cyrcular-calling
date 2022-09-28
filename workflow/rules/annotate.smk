@@ -27,6 +27,8 @@ rule reheader_filtered_bcf:
         sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
     output:
         bcf="results/calling/calls/filtered/reheader/{group}.bcf",
+    log:
+        "logs/reheader_filtered_bcf/{group}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
@@ -34,7 +36,7 @@ rule reheader_filtered_bcf:
         # bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
         ## so we have to re-header ourselves
         """
-        cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf}
+        cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf} 2> {log}
         """
 
 
@@ -44,47 +46,12 @@ rule sort_bcf_header:
         header="results/calling/calls/filtered/{group}.header.txt",
     output:
         sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
-    run:
-        with open(input.header, "rt") as header_file:
-            header = [l.strip() for l in header_file.readlines()]
-            file_format_line = header[0]
-            chrom_line = header[-1]
-            other_lines = header[1:-1]
-            kinds = [
-                "fileDate",
-                "source",
-                "reference",
-                "contig",
-                "phasing",
-                "FILTER",
-                "INFO",
-                "FORMAT",
-                "ALT",
-                "assembly",
-                "META",
-                "SAMPLE",
-                "PEDIGREE",
-                "pedigreeDB",
-            ]
-            categories = {kind: [] for kind in kinds}
-            others = []
-            for line in other_lines:
-                if "=" in line:
-                    kind = line.split("=")[0].lstrip("#")
-                    group = categories.get(kind, others)
-                else:
-                    group = others
-                group.append(line)
-
-            with open(output.sorted_header, "wt") as out:
-                print(file_format_line, file=out)
-                for kind in kinds:
-                    lines = categories[kind]
-                    for line in lines:
-                        print(line, file=out)
-                for line in others:
-                    print(line, file=out)
-                print(chrom_line, file=out)
+    conda:
+        "../envs/gff.yaml"
+    log:
+        "logs/sort_bcf_header/{group}.log",
+    script:
+        "../scripts/sort_bcf_header.py"
 
 
 rule get_bcf_header:
@@ -92,11 +59,13 @@ rule get_bcf_header:
         bcf="{file}.bcf",
     output:
         header="{file}.header.txt",
+    log:
+        "logs/get_bcf_header/{file}.log",
     conda:
         "../envs/bcftools.yaml"
     shell:
         """
-        bcftools view -h {input.bcf} > {output.header}
+        bcftools view -h {input.bcf} > {output.header} 2> {log}
         """
 
 
