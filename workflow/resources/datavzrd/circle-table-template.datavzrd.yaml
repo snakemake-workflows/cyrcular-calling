@@ -52,7 +52,7 @@ __definitions__:
         let links = [];
         for (let region of regions) {{
             let ensembl_url = `https://www.ensembl.org/Homo_sapiens/Location/Overview?r=${{region}}`;
-            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}">${{region}}</a>`; 
+            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}">${{region}}</a>`;
             links.push(link);
         }}
         let result = links.join(", ");
