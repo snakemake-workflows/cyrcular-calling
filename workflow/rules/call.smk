@@ -149,6 +149,7 @@ rule circle_bnds:
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
         ref=config["calling"]["reference"]["path"],
+        ref_index=f'{config["calling"]["reference"]["path"]}.fai',
     output:
         bnds="results/calling/candidates/{sample}.bcf",
         graph="results/calling/graphs/{sample}.graph",

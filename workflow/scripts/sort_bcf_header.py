@@ -1,4 +1,4 @@
-with open(input.header, "rt") as header_file:
+with open(snakemake.input.header, "rt") as header_file:
     header = [l.strip() for l in header_file.readlines()]
     file_format_line = header[0]
     chrom_line = header[-1]
@@ -29,7 +29,7 @@ with open(input.header, "rt") as header_file:
             group = others
         group.append(line)
 
-    with open(output.sorted_header, "wt") as out:
+    with open(snakemake.output.sorted_header, "wt") as out:
         print(file_format_line, file=out)
         for kind in kinds:
             lines = categories[kind]

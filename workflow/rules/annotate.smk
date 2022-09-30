@@ -5,9 +5,9 @@ rule cyrcular_generate_tables:
     input:
         reference=config["calling"]["reference"]["path"],
         graph="results/calling/graphs/{group}.annotated.graph",
-        bcf="results/calling/calls/filtered/reheader/{group}.bcf",
+        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
     output:
-        overview="results/calling/tables/{group}/{group}_overview.tsv",
+        overview="results/calling/tables/{group}/{group}_categorized_overview.tsv",
         details=directory("results/calling/tables/{group}/{group}_details/"),
     threads: 1
     log:
@@ -17,11 +17,7 @@ rule cyrcular_generate_tables:
     conda:
         "../envs/cyrcular.yaml"
     shell:
-        """cyrcular graph table {input.graph} {input.bcf}
-        --reference {input.reference} 
-        --circle-table {output.overview} 
-        --segment-tables {output.details} 
-        2> {log}"""
+        """cyrcular graph table {input.graph} {input.bcf} --reference {input.reference} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
 
 
 rule cyrcular_annotate_graph:
@@ -40,20 +36,17 @@ rule cyrcular_annotate_graph:
     conda:
         "../envs/cyrcular.yaml"
     shell:
-        """cyrcular graph annotate {input.graph} 
-        --reference {input.reference} 
-        --gene-annotation {input.gene_annotation} 
-        --regulatory-annotation {input.regulatory_annotation} 
-        --output {output.annotated} 
-        2> {log}"""
+        """
+        cyrcular graph annotate --reference {input.reference} --gene-annotation {input.gene_annotation} --regulatory-annotation {input.regulatory_annotation} --output {output.annotated} {input.graph} 2> {log}
+        """
 
 
 rule reheader_filtered_bcf:
     input:
-        bcf="results/calling/calls/filtered/{group}.bcf",
-        sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
+        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
+        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
     output:
-        bcf="results/calling/calls/filtered/reheader/{group}.bcf",
+        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
     log:
         "logs/reheader_filtered_bcf/{group}.log",
     conda:
@@ -69,10 +62,10 @@ rule reheader_filtered_bcf:
 
 rule sort_bcf_header:
     input:
-        bcf="results/calling/calls/filtered/{group}.bcf",
-        header="results/calling/calls/filtered/{group}.header.txt",
+        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
+        header="results/calling/calls/filtered_fdr/{group}.header.txt",
     output:
-        sorted_header="results/calling/calls/filtered/reheader/{group}.header.sorted.txt",
+        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
     conda:
         "../envs/gff.yaml"
     log:
