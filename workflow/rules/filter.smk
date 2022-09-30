@@ -7,20 +7,28 @@ rule filter_overview_table:
         regulatory="results/calling/tables/{group}/{group}_overview.regulatory.tsv",
         intronic="results/calling/tables/{group}/{group}_overview.intronic.tsv",
         discarded="results/calling/tables/{group}/{group}_overview.discarded.tsv",
+        categorized="results/calling/tables/{group}/{group}_categorized_overview.tsv",
     log:
         "logs/filter_overview_table/{group}.log",
-    conda:
-        "../envs/csvtk.yaml"
-    # params:
-    #     min_length=f"$circle_length >= {config['calling'].get('filter', {}).get('circles', {}).get('min-length', 0)}",
-    #     max_length=f"$circle_length <= {config['calling'].get('filter', {}).get('circles', {}).get('max-length', 18446744073709551616)}",
-    shell:
-        """
-        csvtk tab2csv {input.table} | csvtk filter2 -f '$num_exons > 0' | csvtk csv2tab > {output.coding} 2> {log}
-        csvtk tab2csv {input.table} | csvtk filter2 -f '$num_exons <= 0 && $regulatory_features != ""' | csvtk csv2tab > {output.regulatory} 2>> {log}
-        csvtk tab2csv {input.table} | csvtk filter2 -f '$num_exons <= 0 && $regulatory_features == "" && $gene_names != ""' | csvtk csv2tab > {output.intronic} 2>> {log}
-        csvtk tab2csv {input.table} | csvtk filter2 -f '$num_exons <= 0 && $regulatory_features == "" && $gene_names == ""' | csvtk csv2tab > {output.discarded} 2>> {log}
-        """
+    run:
+        df = pd.read_csv(input.table, sep="\t")
+        df.loc[:, ["gene_names", "gene_ids", "regulatory_features"]] = df.loc[
+            :, ["gene_names", "gene_ids", "regulatory_features"]
+        ].fillna("")
+        df["category"] = df[["num_exons", "regulatory_features", "gene_names"]].apply(
+            lambda r: "coding"
+            if r["num_exons"] > 0
+            else (
+                "regulatory"
+                if r["regulatory_features"]
+                else ("intronic" if r["gene_names"] else "discarded")
+            ),
+            axis=1,
+        )
+        for kind in ["coding", "regulatory", "intronic", "discarded"]:
+            part = df.query("category == 'coding'")
+            part.to_csv(getattr(output, part), sep="\t", index=False)
+        df.to_csv(output.categorized, sep="\t", index=False)
 
 
 rule filter_varlociraptor:
