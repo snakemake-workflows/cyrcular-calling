@@ -13,13 +13,13 @@ calling:
     # Ensembl species name
     species: homo_sapiens
     # Ensembl release
-    release: 100
+    release: 107
     # Genome build
     build: GRCh38
 
-    # For now, fixed to gencode annotation in GFF3 format
+    # For now, fixed to ensembl annotation in GFF3 format
     annotation:
-      release: 41
+      release: 107
 
 
   # minimum read depth (used during covered segment identification)
@@ -40,3 +40,6 @@ calling:
         circular:
           varlociraptor:
             - present
+    circles:
+      min-length: 100
+      max-length: 50_000_000

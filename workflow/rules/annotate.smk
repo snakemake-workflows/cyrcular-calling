@@ -1,24 +1,51 @@
 ## annotate genes, exons and breakpoint sequences; produce one overview table containing circles, and one table with details of each segment for each circle
 
 
-rule cyrcular_annotate:
+rule cyrcular_generate_tables:
     input:
         reference=config["calling"]["reference"]["path"],
-        graph="results/calling/graphs/{group}.graph",
+        graph="results/calling/graphs/{group}.annotated.graph",
         bcf="results/calling/calls/filtered/reheader/{group}.bcf",
-        annotation="resources/gencode.annotation.sorted.gff3.gz",
     output:
         overview="results/calling/tables/{group}/{group}_overview.tsv",
         details=directory("results/calling/tables/{group}/{group}_details/"),
     threads: 1
     log:
-        "logs/cyrcular_annotate/{group}.log",
+        "logs/cyrcular_generate_tables/{group}.log",
     benchmark:
-        "benchmarks/cyrcular_annotate/{group}.txt"
+        "benchmarks/cyrcular_generate_tables/{group}.txt"
     conda:
         "../envs/cyrcular.yaml"
     shell:
-        """cyrcular graph annotate {input.graph} {input.bcf} --reference {input.reference} --annotation {input.annotation} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
+        """cyrcular graph table {input.graph} {input.bcf}
+        --reference {input.reference} 
+        --circle-table {output.overview} 
+        --segment-tables {output.details} 
+        2> {log}"""
+
+
+rule cyrcular_annotate_graph:
+    input:
+        reference=config["calling"]["reference"]["path"],
+        graph="results/calling/graphs/{group}.graph",
+        gene_annotation="resources/gene_annotation.gff3.gz",
+        regulatory_annotation="resources/regulatory_annotation.gff3.gz",
+    output:
+        annotated="results/calling/graphs/{group}.annotated.graph",
+    threads: 1
+    log:
+        "logs/cyrcular_annotate_graph/{group}.log",
+    benchmark:
+        "benchmarks/cyrcular_annotate_graph/{group}.txt"
+    conda:
+        "../envs/cyrcular.yaml"
+    shell:
+        """cyrcular graph annotate {input.graph} 
+        --reference {input.reference} 
+        --gene-annotation {input.gene_annotation} 
+        --regulatory-annotation {input.regulatory_annotation} 
+        --output {output.annotated} 
+        2> {log}"""
 
 
 rule reheader_filtered_bcf:
@@ -119,39 +146,33 @@ rule copy_annotation_from_cyrcular:
         """
 
 
-rule sort_annotation:
-    input:
-        gff="resources/gencode.annotation.gff3.gz",
+rule download_regulatory_annotation:
     output:
-        gff="resources/gencode.annotation.sorted.gff3.gz",
-        tbi="resources/gencode.annotation.sorted.gff3.gz.tbi",
-        csi="resources/gencode.annotation.sorted.gff3.gz.csi",
-    conda:
-        "../envs/gff.yaml"
+        "resources/regulatory_annotation.gff3.gz",
     log:
-        "logs/sort_annotation/gencode.annotation.gff3.log",
-    benchmark:
-        "benchmarks/sort_annotation/gencode.annotation.gff3.txt"
-    threads: 48
-    shell:
-        """
-        gff3sort.pl <(pigz -dc {input.gff}) | bgzip -@ {threads} -c > {output.gff} 2> {log}
-        tabix {output.gff} 2>> {log}
-        tabix --csi {output.gff} 2>> {log}
-        """
-
-
-rule download_annotation:
-    output:
-        "resources/gencode.annotation.gff3.gz",
-    log:
-        "logs/download_annotation.log",
+        "logs/download_regulatory_annotation.log",
     params:
         release=get_annotation_release,
     benchmark:
-        "benchmarks/download_annotation.txt"
+        "benchmarks/download_regulatory_annotation.txt"
     cache: True
     conda:
         "../envs/wget.yaml"
     shell:
-        """wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_{params.release}/gencode.v{params.release}.annotation.gff3.gz --no-check-certificate -O {output} 2> {log}"""
+        """wget https://ftp.ensembl.org/pub/release-{params.release}/regulation/homo_sapiens/homo_sapiens.GRCh38.Regulatory_Build.regulatory_features.20220201.gff.gz --no-check-certificate -O {output} 2> {log}"""
+
+
+rule download_gene_annotation:
+    output:
+        "resources/gene_annotation.gff3.gz",
+    log:
+        "logs/download_gene_annotation.log",
+    params:
+        release=get_annotation_release,
+    benchmark:
+        "benchmarks/download_gene_annotation.txt"
+    cache: True
+    conda:
+        "../envs/wget.yaml"
+    shell:
+        """wget https://ftp.ensembl.org/pub/release-{params.release}/gff3/homo_sapiens/Homo_sapiens.GRCh38.{params.release}.gff3.gz --no-check-certificate -O {output} 2> {log}"""

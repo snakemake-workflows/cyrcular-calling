@@ -57,13 +57,15 @@ units = read_units()
 
 
 def get_all_input(wildcards):
+    KINDS = ["coding", "regulatory", "intronic"]
     targets = []
-    targets += ["results/datavzrd-report/all.fdr-controlled"]
+    targets += expand("results/datavzrd-report/{kind}.fdr-controlled", kind=KINDS)
     targets += expand(
-        "results/calling/tables/{group}/{group}_overview.tsv", group=GROUPS
+        "results/tmp/{group}.{kind}.qc_plots.marker", group=GROUPS, kind=KINDS
     )
-    targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
-    targets += expand("results/tmp/{group}.graph_plots.marker", group=GROUPS)
+    targets += expand(
+        "results/tmp/{group}.{kind}.graph_plots.marker", group=GROUPS, kind=KINDS
+    )
     return targets
 
 
@@ -278,4 +280,28 @@ def copy_annotation_bcftools_annotate_columns():
 
 
 def get_annotation_release(wildcards):
-    return config["calling"]["reference"].get("annotation", {}).get("release", "38")
+    return config["calling"]["reference"].get("annotation", {}).get("release", "107")
+
+
+def get_detail_tables_for_report(wildcards):
+    kind = wildcards.kind
+    res = []
+    for group in GROUPS:
+        group_tsv = pd.read_csv(
+            f"results/calling/tables/{group}/{group}_overview.{kind}.tsv", sep="\t"
+        )
+        keep_event_ids = set(group_tsv["event_id"])
+        detail_table_files = [
+            f
+            for f in os.listdir(f"results/calling/tables/{group}/{group}_details/")
+            if f.endswith(".tsv")
+        ]
+        event_ids = [
+            Path(path).stem.split("_")[1] + "-" + Path(path).stem.split("_")[3]
+            for path in detail_table_files
+        ]
+        for event_id, detail_file in zip(event_ids, detail_table_files):
+            if event_id not in keep_event_ids:
+                continue
+            res.append((group, event_id, detail_file))
+    return res

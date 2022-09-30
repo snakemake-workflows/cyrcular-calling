@@ -12,8 +12,8 @@ rule minimap2_bam:
     params:
         extra=get_minimap2_mapping_params,  # optional
         sorting="coordinate",  # optional: Enable sorting. Possible values: 'none', 'queryname' or 'coordinate'
-        sort_extra=lambda wc: f"-@ {workflow.cores * 0.5}",  # optional: extra arguments for samtools/picard
-    threads: workflow.cores * 0.5
+        sort_extra=lambda wc: f"-@ 4",  # optional: extra arguments for samtools/picard
+    threads: workflow.cores // 2
     wrapper:
         "v1.0.0/bio/minimap2/aligner"
 
