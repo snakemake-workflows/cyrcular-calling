@@ -4,16 +4,17 @@ __definitions__:
   - | 
     circle_qc_plot_link = f"""
     function(value, row) {{
-      var filename = value.replace("_circle_", "_");
-      var link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/graph_${{filename}}.html' target='_blank'>${{value}}</a>`;
+      let graph_id = row["graph_id"]
+      let circle_id = row["circle_id"]
+      let link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/graph_${{graph_id}}_${{circle_id}}.html' target='_blank'>${{value}}</a>`;
       return link;
     }}
     """
   - | 
     graph_link = f"""
     function(value, row) {{
-      var graph_id = value;
-      var link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/graph_${{graph_id}}.pdf' target='_blank'>${{value}}</a>`;
+      let graph_id = value;
+      let link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/graph_${{graph_id}}.pdf' target='_blank'>${{value}}</a>`;
       return link;
     }}
     """
@@ -23,7 +24,7 @@ __definitions__:
         $(function () {{
             $('[data-toggle="tooltip"]').tooltip()
         }});
-            let genes = value.split(";");
+            let genes = value.split(",");
             let rows = "";
             for (let g of genes) {{
                 rows = `${{rows}}<tr><td><a data-toggle="tooltip" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${{g}}" target="_blank">${{g}}</a></td></tr>`;
@@ -38,10 +39,24 @@ __definitions__:
   - |
     breakpoint_link = f"""
     function(value, row) {{
-        var primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM=Homo%20sapiens&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
-        var seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
-        var link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}">${{seq}}</a>`;
+        let primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM=Homo%20sapiens&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
+        let seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
+        let link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}">${{seq}}</a>`;
         return link;
+    }}
+    """
+  - |
+    regions_links = f"""
+    function(value, row) {{
+        let regions = value.split(",");
+        let links = [];
+        for (let region of regions) {{
+            let ensembl_url = `https://www.ensembl.org/Homo_sapiens/Location/Overview?r=${{region}}`;
+            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}">${{region}}</a>`; 
+            links.push(link);
+        }}
+        let result = links.join(", ");
+        return result;
     }}
     """
 
@@ -70,6 +85,8 @@ views:
           custom: ?graph_link
         "circle_id":
           custom: ?circle_qc_plot_link
+        "regions":
+          custom: ?regions_links
         "circle_length":
           plot: 
             ticks:
@@ -122,6 +139,7 @@ views:
 
   ?for group, circle, _ in params.detail_tables:
     ?f"detail-{group}-{circle}-segments":
+      hidden: true
       desc: |
         Detail table containing all covered segments and circle junctions for a circle
       dataset: ?f"data-{group}-{circle}-segments"
@@ -166,5 +184,9 @@ views:
               aux-domain-columns:
                 - "num_split_reads"
         "breakpoint_sequence":
-          ellipsis: 32
+          custom: ?breakpoint_link
+        "gene_names":
+          custom: ?gene_link
+        "gene_ids":
+          display: hidden
         
