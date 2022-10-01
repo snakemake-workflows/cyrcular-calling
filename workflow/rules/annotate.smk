@@ -7,7 +7,7 @@ rule cyrcular_generate_tables:
         graph="results/calling/graphs/{group}.annotated.graph",
         bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
     output:
-        overview="results/calling/tables/{group}/{group}_categorized_overview.tsv",
+        overview="results/calling/tables/{group}/{group}_overview.tsv",
         details=directory("results/calling/tables/{group}/{group}_details/"),
     threads: 1
     log:

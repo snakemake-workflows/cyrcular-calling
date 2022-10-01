@@ -81,61 +81,56 @@ views:
         Overview table showing all discovered circles for a group.
       dataset: ?f"data-{group}-circles"
       render-table:
-        "graph_id":
-          custom: ?graph_link
-        "circle_id":
-          custom: ?circle_qc_plot_link
-        "regions":
-          custom: ?regions_links
-        "circle_length":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "circle_length"
-        "segment_count":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "segment_count"
-        "score":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "score"
-        "num_split_reads":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "num_split_reads"
-        "regex('prob_(.+)')":
-          plot:
-            heatmap:
-              scale: linear
-              domain: [0.0, 1.0]
-              range:
-                - white
-                - "#c1d7a8"
-        "gene_names":
-          custom: ?gene_link
-        "gene_ids":
-          ellipsis: 16
-        "num_exons":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "num_exons"
-        "regex('af_(.+)')":
-          plot: 
-            ticks:
-              scale: "linear"
-              domain: [0.0, 1.0]
-              aux-domain-columns:
-                - "regex('af_(.+)')"
+        columns:
+          "graph_id":
+            custom: ?graph_link
+          "circle_id":
+            custom: ?circle_qc_plot_link
+          "regions":
+            custom: ?regions_links
+          "circle_length":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "circle_length"
+          "segment_count":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "segment_count"
+          "num_split_reads":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "num_split_reads"
+          "regex('prob_(.+)')":
+            plot:
+              heatmap:
+                scale: linear
+                domain: [0.0, 1.0]
+                range:
+                  - white
+                  - "#c1d7a8"
+          "gene_names":
+            custom: ?gene_link
+          "gene_ids":
+            display-mode: hidden
+          "num_exons":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "num_exons"
+          "regex('af_(.+)')":
+            plot: 
+              ticks:
+                scale: "linear"
+                domain: [0.0, 1.0]
+                aux-domain-columns:
+                  - "regex('af_(.+)')"
 
   ?for group, circle, _ in params.detail_tables:
     ?f"detail-{group}-{circle}-segments":
@@ -144,49 +139,40 @@ views:
         Detail table containing all covered segments and circle junctions for a circle
       dataset: ?f"data-{group}-{circle}-segments"
       render-table:
-        "circle_length":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "circle_length"
-        "segment_count":
-          display: hidden
-        "score":
-          display: hidden
-        "kind":
-          plot:
-            heatmap:
-              scale: ordinal
-              color-scheme: accent
-        "length":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "length"
-        "num_exons":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "num_exons"
-        "coverage":
-          plot: 
-            ticks:
-              scale: "sqrt"
-              aux-domain-columns:
-                - "coverage"
-        "num_split_reads": 
-          plot:
-            ticks:
-              scale: "sqrt"
-              aux-domain-columns:
-                - "num_split_reads"
-        "breakpoint_sequence":
-          custom: ?breakpoint_link
-        "gene_names":
-          custom: ?gene_link
-        "gene_ids":
-          display: hidden
+        columns:
+          "kind":
+            plot:
+              heatmap:
+                scale: ordinal
+                color-scheme: accent
+          "length":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "length"
+          "num_exons":
+            plot: 
+              ticks:
+                scale: "linear"
+                aux-domain-columns:
+                  - "num_exons"
+          "coverage":
+            plot: 
+              ticks:
+                scale: "sqrt"
+                aux-domain-columns:
+                  - "coverage"
+          "num_split_reads": 
+            plot:
+              ticks:
+                scale: "sqrt"
+                aux-domain-columns:
+                  - "num_split_reads"
+          "breakpoint_sequence":
+            custom: ?breakpoint_link
+          "gene_names":
+            custom: ?gene_link
+          "gene_ids":
+            display-mode: hidden
         

@@ -42,20 +42,8 @@ rule copy_qc_plots_for_datavzrd:
         ),
     log:
         "logs/datavzrd/copy_qc_plots/{group}.{kind}.log",
-    run:
-        import os
-        import shutil
-        from pathlib import Path
-
-        os.makedirs(params.output_dir)
-        overview = pd.read_csv(input.overview, sep="\t")
-        event_ids = {s.replace("-", "_") for s in overview["event_id"]}
-        for event_id in event_ids:
-            shutil.copy(
-                Path(input.plots).join(f"graph_{event_id}.html"),
-                Path(params.output_dir),
-            )
-        Path(output.marker).touch()
+    script:
+        "../scripts/copy_qc_plots.py"
 
 
 rule copy_graph_plots_for_datavzrd:
@@ -71,19 +59,8 @@ rule copy_graph_plots_for_datavzrd:
         ),
     log:
         "logs/datavzrd/copy_graph_plots/{group}.{kind}.log",
-    run:
-        import os
-        import shutil
-        from pathlib import Path
-
-        os.makedirs(params.output_dir)
-        overview = pd.read_csv(input.overview, sep="\t")
-        graph_ids = set(overview["graph_id"])
-        for graph_id in graph_ids:
-            shutil.copy(
-                Path(input.plots).join(f"graph_{graph_id}.pdf"), Path(params.output_dir)
-            )
-        Path(output.marker).touch()
+    script:
+        "../scripts/copy_graph_plots.py"
 
 
 rule datavzrd_circle_calls:

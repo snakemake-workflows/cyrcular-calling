@@ -26,8 +26,8 @@ rule filter_overview_table:
             axis=1,
         )
         for kind in ["coding", "regulatory", "intronic", "discarded"]:
-            part = df.query("category == 'coding'")
-            part.to_csv(getattr(output, part), sep="\t", index=False)
+            part = df.query(f"category == '{kind}'")
+            part.to_csv(getattr(output, kind), sep="\t", index=False)
         df.to_csv(output.categorized, sep="\t", index=False)
 
 
