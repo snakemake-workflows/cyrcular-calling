@@ -60,32 +60,31 @@ __definitions__:
     }}
     """
 
-default-view: ?f"summary-plot-{params.groups[0]}"
+default-view: "summary-plot"
 
 datasets:
-  ?for group, path in params.overview_tables:
-    ?f"data-{group}-circles":
+  ?for category, path in params.overview_tables:
+    ?f"data-{category}-circles":
       path: ?path
       separator: "\t"
       links:
         circle-details:
           column: event_id
-          view: "detail-{value}-segments"
-  ?for group, circle, path in params.detail_tables:
-    ?f"data-{group}-{circle}-segments":
+          view: ?f"detail-{params.group}-{{value}}-segments"
+  ?for category, circle, path in params.detail_tables:
+    ?f"data-{category}-{circle}-segments":
       path: ?path
       separator: "\t"
-  ?for group, path in params.categorized_tables:
-    ?f"overview-table-{group}":
-      path: ?path
-      separator: "\t"
+  "overview-table":
+    path: ?params.categorized_table
+    separator: "\t"
 
 views:
-  ?for group in params.groups:
-    ?f"circles-{group}":
+  ?for category in params.categories:
+    ?f"circles-{category}":
       desc: |
-        Overview table showing all discovered circles for a group.
-      dataset: ?f"data-{group}-circles"
+        Overview table showing all discovered circles for a category.
+      dataset: ?f"data-{category}-circles"
       render-table:
         columns:
           "graph_id":
@@ -138,12 +137,12 @@ views:
                 aux-domain-columns:
                   - "regex('af_(.+)')"
 
-  ?for group, circle, _ in params.detail_tables:
-    ?f"detail-{group}-{circle}-segments":
+  ?for category, circle, _ in params.detail_tables:
+    ?f"detail-{category}-{circle}-segments":
       hidden: true
       desc: |
         Detail table containing all covered segments and circle junctions for a circle
-      dataset: ?f"data-{group}-{circle}-segments"
+      dataset: ?f"data-{category}-{circle}-segments"
       render-table:
         columns:
           "kind":
@@ -182,10 +181,9 @@ views:
           "gene_ids":
             display-mode: hidden
 
-  ?for group in params.groups:
-    ?f"summary-plot-{group}":
-      desc: |
-        Circle length distribution for different categories of circles.
-      dataset: ?f"overview-table-{group}"
-      render-plot:
-        spec-path: resources/summary_plot.json
+  "summary-plot":
+    desc: |
+      Circle length distribution for different categories of circles.
+    dataset: ?f"overview-table"
+    render-plot:
+      spec-path: resources/summary_plot.json

@@ -36,6 +36,7 @@ def read_samples():
 
 samples = read_samples()
 GROUPS = list(sorted(set(samples["group"])))
+CATEGORIES = ["coding", "regulatory", "intronic"]
 
 
 def read_units():
@@ -57,14 +58,17 @@ units = read_units()
 
 
 def get_all_input(wildcards):
-    KINDS = ["coding", "regulatory", "intronic"]
     targets = []
-    targets += expand("results/datavzrd-report/{kind}.fdr-controlled", kind=KINDS)
+    targets += expand("results/datavzrd-report/{group}.fdr-controlled", group=GROUPS)
     targets += expand(
-        "results/tmp/{group}.{kind}.qc_plots.marker", group=GROUPS, kind=KINDS
+        "results/tmp/{group}.{category}.qc_plots.marker",
+        group=GROUPS,
+        category=CATEGORIES,
     )
     targets += expand(
-        "results/tmp/{group}.{kind}.graph_plots.marker", group=GROUPS, kind=KINDS
+        "results/tmp/{group}.{category}.graph_plots.marker",
+        group=GROUPS,
+        category=CATEGORIES,
     )
     return targets
 
@@ -286,13 +290,12 @@ def get_annotation_release(wildcards):
 def get_detail_tables_for_report(wildcards):
     from pathlib import Path
 
-    kind = wildcards.kind
     res = []
 
     for group in GROUPS:
         folder = f"results/calling/tables/{group}/{group}_details"
         group_tsv = pd.read_csv(
-            f"results/calling/tables/{group}/{group}_overview.{kind}.tsv", sep="\t"
+            f"results/calling/tables/{group}/{group}_categorized_overview.tsv", sep="\t"
         )
         keep_event_ids = set(group_tsv["event_id"])
         detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
