@@ -76,18 +76,11 @@ datasets:
       path: ?path
       separator: "\t"
   ?for group, path in params.categorized_tables:
-    f"overview-table-{group}":
+    ?f"overview-table-{group}":
       path: ?path
       separator: "\t"
 
 views:
-  ?for group in params.groups:
-    ?f"summary-plot-{group}":
-      desc: |
-        Circle length distribution for different categories of circles.
-      dataset: ?f"overview-table-{group}"
-      render-plot:
-        spec-path: resources/summary_plot.json
   ?for group in params.groups:
     ?f"circles-{group}":
       desc: |
@@ -188,4 +181,11 @@ views:
             custom: ?gene_link
           "gene_ids":
             display-mode: hidden
-        
+
+  ?for group in params.groups:
+    ?f"summary-plot-{group}":
+      desc: |
+        Circle length distribution for different categories of circles.
+      dataset: ?f"overview-table-{group}"
+      render-plot:
+        spec-path: resources/summary_plot.json
