@@ -1,0 +1,18 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "mark": "boxplot",
+  "encoding": {
+    "x": {
+      "field": "circle_length",
+      "type": "quantitative"
+    },
+    "y": {
+      "field": "category"
+    }
+  },
+  "config": {
+    "legend": {
+      "disable": true
+    }
+  }
+}
