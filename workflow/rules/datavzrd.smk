@@ -6,6 +6,7 @@ rule render_datavzrd_config:
         template=workflow.source_path(
             "../resources/datavzrd/circle-table-template.datavzrd.yaml"
         ),
+        categorized_overview_tables=expand("results/calling/tables/{group}/{group}_categorized_overview.tsv", group=GROUPS),
         overview_tables=expand(
             "results/calling/tables/{group}/{group}_overview.{kind}.tsv",
             group=GROUPS,
@@ -22,6 +23,7 @@ rule render_datavzrd_config:
             (group, f"results/calling/tables/{group}/{group}_overview.{wc.kind}.tsv")
             for group in GROUPS
         ],
+        categorized_tables=lambda wc: [(group, f"results/calling/tables/{group}/{group}_categorized_overview.tsv") for group in GROUPS],
         detail_tables=get_detail_tables_for_report,
     log:
         "logs/datavzrd_render/{kind}.log",

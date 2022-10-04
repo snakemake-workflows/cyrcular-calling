@@ -60,6 +60,8 @@ __definitions__:
     }}
     """
 
+default-view: ?f"summary-plot-{params.groups[0]}"
+
 datasets:
   ?for group, path in params.overview_tables:
     ?f"data-{group}-circles":
@@ -73,8 +75,19 @@ datasets:
     ?f"data-{group}-{circle}-segments":
       path: ?path
       separator: "\t"
+  ?for group, path in params.categorized_tables:
+    f"overview-table-{group}":
+      path: ?path
+      separator: "\t"
 
 views:
+  ?for group in params.groups:
+    ?f"summary-plot-{group}":
+      desc: |
+        Circle length distribution for different categories of circles.
+      dataset: ?f"overview-table-{group}"
+      render-plot:
+        spec-path: resources/summary_plot.json
   ?for group in params.groups:
     ?f"circles-{group}":
       desc: |
