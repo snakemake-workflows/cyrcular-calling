@@ -27,13 +27,32 @@
       "mark": {
         "type": "circle"
       },
+      "height": {
+        "step": 40
+      },
+      "width": "container",
+      "transform": [
+        {
+          "calculate": "datum.prob_present / 2 + random() / 10 - 0.05",
+          "as": "jitter"
+        }
+      ],
       "encoding": {
+        "row": {
+          "field": "category",
+          "type": "ordinal",
+          "spacing": 0
+        },
         "x": {
           "field": "circle_length",
           "type": "quantitative"
         },
         "y": {
-          "field": "category"
+          "field": "jitter",
+          "axis": {
+            "title": null,
+            "labels": false
+          }
         },
         "color": {
           "field": "category"

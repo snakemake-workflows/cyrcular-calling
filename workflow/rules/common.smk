@@ -290,24 +290,23 @@ def get_annotation_release(wildcards):
 def get_detail_tables_for_report(wildcards):
     from pathlib import Path
 
+    group = wildcards.group
     res = []
-
-    for group in GROUPS:
-        folder = f"results/calling/tables/{group}/{group}_details"
-        group_tsv = pd.read_csv(
-            f"results/calling/tables/{group}/{group}_categorized_overview.tsv", sep="\t"
-        )
-        keep_event_ids = set(group_tsv["event_id"])
-        detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
-        event_ids = [
-            Path(path).stem.split("_")[1] + "-" + Path(path).stem.split("_")[3]
-            for path in detail_table_files
-        ]
-        for event_id, detail_file in zip(event_ids, detail_table_files):
-            if event_id not in keep_event_ids:
-                continue
-            f = pd.read_csv(folder + "/" + detail_file, sep="\t")
-            if f.empty:
-                continue
-            res.append((group, event_id, folder + "/" + detail_file))
+    folder = f"results/calling/tables/{group}/{group}_details"
+    group_tsv = pd.read_csv(
+        f"results/calling/tables/{group}/{group}_categorized_overview.tsv", sep="\t"
+    )
+    keep_event_ids = set(group_tsv["event_id"])
+    detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
+    event_ids = [
+        Path(path).stem.split("_")[1] + "-" + Path(path).stem.split("_")[3]
+        for path in detail_table_files
+    ]
+    for event_id, detail_file in zip(event_ids, detail_table_files):
+        if event_id not in keep_event_ids:
+            continue
+        f = pd.read_csv(folder + "/" + detail_file, sep="\t")
+        if f.empty:
+            continue
+        res.append((group, event_id, folder + "/" + detail_file))
     return res
