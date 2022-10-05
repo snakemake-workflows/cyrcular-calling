@@ -8,6 +8,7 @@
     {
       "mark": "tick",
       "height": 60,
+      "width": 800,
       "encoding": {
         "x": {
           "bin": true,
@@ -28,9 +29,9 @@
         "type": "circle"
       },
       "height": {
-        "step": 40
+        "step": 60
       },
-      "width": "container",
+      "width": 800,
       "transform": [
         {
           "calculate": "datum.prob_present / 2 + random() / 10 - 0.05",
