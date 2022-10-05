@@ -27,6 +27,7 @@ rule render_datavzrd_config:
         categorized_table=lambda wc: f"results/calling/tables/{wc.group}/{wc.group}_categorized_overview.tsv",
         group=lambda wc: wc.group,
         detail_tables=get_detail_tables_for_report,
+        summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
     log:
         "logs/datavzrd_render/{group}.log",
     template_engine:

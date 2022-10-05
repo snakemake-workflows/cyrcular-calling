@@ -186,4 +186,4 @@ views:
       Circle length distribution for different categories of circles.
     dataset: ?f"overview-table"
     render-plot:
-      spec-path: resources/summary_plot.json
+      spec-path: ?params.summary_spec
