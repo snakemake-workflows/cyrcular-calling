@@ -1,15 +1,63 @@
 {
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-  "mark": "boxplot",
-  "encoding": {
-    "x": {
-      "field": "circle_length",
-      "type": "quantitative"
-    },
-    "y": {
-      "field": "category"
-    }
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
   },
+  "vconcat": [
+    {
+      "mark": "tick",
+      "height": 60,
+      "encoding": {
+        "x": {
+          "bin": true,
+          "field": "circle_length",
+          "title": ""
+        },
+        "color": {
+          "field": "category"
+        },
+        "y": {
+          "aggregate": "count",
+          "title": ""
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle"
+      },
+      "encoding": {
+        "x": {
+          "field": "circle_length",
+          "type": "quantitative"
+        },
+        "y": {
+          "field": "category"
+        },
+        "color": {
+          "field": "category"
+        },
+        "opacity": {
+          "field": "prob_present"
+        },
+        "tooltip": [
+          {
+            "field": "event_id",
+            "type": "nominal"
+          },
+          {
+            "field": "regions",
+            "type": "nominal"
+          },
+          {
+            "field": "circle_length",
+            "type": "quantitative"
+          }
+        ]
+      }
+    }
+  ],
   "config": {
     "legend": {
       "disable": true

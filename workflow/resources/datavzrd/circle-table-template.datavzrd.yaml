@@ -78,6 +78,10 @@ datasets:
   "overview-table":
     path: ?params.categorized_table
     separator: "\t"
+    # links:
+    #   link to circle:
+    #     column: event_id
+    #     table-row: ?f"data-{CATEGORY}-circles/event_id"
 
 views:
   ?for category in params.categories:
