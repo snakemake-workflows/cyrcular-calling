@@ -74,7 +74,9 @@
     },
     {
       "mark": {
-        "type": "tick"
+        "type": "tick",
+        "thickness": 2,
+        "tooltip": true
       },
       "height": 150,
       "width": 800,
@@ -84,12 +86,19 @@
           "field": "circle_length",
           "title": ""
         },
-        "color": {
-          "field": "category"
-        },
         "y": {
           "aggregate": "count",
-          "title": "count"
+          "title": "count",
+          "scale": {
+            "type": "sqrt"
+          },
+          "stack": null
+        },
+        "xOffset": {
+          "field": "category"
+        },
+        "color": {
+          "field": "category"
         }
       }
     },
@@ -109,7 +118,13 @@
         "row": {
           "field": "category",
           "type": "ordinal",
-          "spacing": 0
+          "spacing": 0,
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "discarded"
+          ]
         },
         "x": {
           "field": "circle_length",
