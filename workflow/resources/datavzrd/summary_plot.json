@@ -4,10 +4,79 @@
     "type": "fit",
     "contains": "padding"
   },
+  "resolve": {
+    "scale": {
+      "x": "shared",
+      "y": "independent"
+    }
+  },
+  "bounds": "flush",
+  "title": {
+    "text": "Circle length histograms and pseudo-scatter plots by category"
+  },
   "vconcat": [
     {
-      "mark": "tick",
-      "height": 60,
+      "mark": {
+        "type": "bar"
+      },
+      "height": 100,
+      "width": 800,
+      "encoding": {
+        "x": {
+          "field": "category",
+          "type": "nominal",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "discarded"
+          ],
+          "scale": {
+            "type": "ordinal",
+            "scheme": "set1",
+            "domain": [
+              "coding",
+              "regulatory",
+              "intronic",
+              "discarded"
+            ]
+          }
+        },
+        "y": {
+          "field": "category",
+          "aggregate": "count",
+          "title": "circle count",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "category",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "discarded"
+          ],
+          "scale": {
+            "type": "ordinal",
+            "scheme": "set1",
+            "domain": [
+              "coding",
+              "regulatory",
+              "intronic",
+              "discarded"
+            ]
+          }
+        },
+        "href": {
+          "field": "link to category"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "tick"
+      },
+      "height": 150,
       "width": 800,
       "encoding": {
         "x": {
@@ -20,7 +89,7 @@
         },
         "y": {
           "aggregate": "count",
-          "title": ""
+          "title": "count"
         }
       }
     },
@@ -28,9 +97,7 @@
       "mark": {
         "type": "circle"
       },
-      "height": {
-        "step": 60
-      },
+      "height": 200,
       "width": 800,
       "transform": [
         {
@@ -46,7 +113,8 @@
         },
         "x": {
           "field": "circle_length",
-          "type": "quantitative"
+          "type": "quantitative",
+          "title": "circle length"
         },
         "y": {
           "field": "jitter",
