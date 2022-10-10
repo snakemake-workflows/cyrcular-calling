@@ -107,39 +107,6 @@ rule extract_vcf_header_lines_for_bcftools_annotate:
         """
 
 
-rule copy_annotation_from_cyrcular:
-    input:
-        variants="results/calling/calls/merged/{sample}.bcf",
-        variants_index="results/calling/calls/merged/{sample}.bcf.csi",
-        candidates_with_annotation="results/calling/candidates/{sample}.sorted.bcf",
-        candidates_with_annotation_index="results/calling/candidates/{sample}.sorted.bcf.csi",
-        header_lines="results/calling/annotation/{sample}.header_lines.txt",
-    output:
-        variants="results/calling/calls/annotated/{sample}.bcf",
-        annotation=temp("results/calling/candidates/{sample}.sorted.bcf.tab"),
-        annotation_bgzip=temp("results/calling/candidates/{sample}.sorted.bcf.tab.bgz"),
-        annotation_bgzip_tabix=temp(
-            "results/calling/candidates/{sample}.sorted.bcf.tab.bgz.tbi"
-        ),
-    log:
-        "logs/re-annotate/{sample}.log",
-    benchmark:
-        "benchmarks/re-annotate/{sample}.txt"
-    conda:
-        "../envs/vcf_annotate.yaml"
-    params:
-        header=copy_annotation_vembrane_header_expr(),
-        table_expr=copy_annotation_table_expr(),
-        columns=copy_annotation_bcftools_annotate_columns(),
-    shell:
-        """
-        vembrane table --header {params.header:q} {params.table_expr:q} {input.candidates_with_annotation} > {output.annotation} 2> {log}
-        bgzip -c {output.annotation} > {output.annotation_bgzip} 2>> {log}
-        tabix -p vcf --zero-based -S 1 -f {output.annotation_bgzip} 2>> {log}
-        bcftools annotate --header-lines {input.header_lines} --annotations {output.annotation_bgzip} --columns {params.columns} --output-type b --output {output.variants} {input.variants}  2>> {log}
-        """
-
-
 rule download_regulatory_annotation:
     output:
         "resources/regulatory_annotation.gff3.gz",
