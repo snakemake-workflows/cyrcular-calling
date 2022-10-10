@@ -100,24 +100,6 @@ views:
             custom: ?circle_qc_plot_link
           "regions":
             custom: ?regions_links
-          "circle_length":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "circle_length"
-          "segment_count":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "segment_count"
-          "num_split_reads":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "num_split_reads"
           "regex('prob_(.+)')":
             plot:
               heatmap:
@@ -130,12 +112,6 @@ views:
             custom: ?gene_link
           "gene_ids":
             display-mode: hidden
-          "num_exons":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "num_exons"
           "regex('af_(.+)')":
             plot: 
               ticks:
@@ -157,30 +133,6 @@ views:
               heatmap:
                 scale: ordinal
                 color-scheme: accent
-          "length":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "length"
-          "num_exons":
-            plot: 
-              ticks:
-                scale: "linear"
-                aux-domain-columns:
-                  - "num_exons"
-          "coverage":
-            plot: 
-              ticks:
-                scale: "sqrt"
-                aux-domain-columns:
-                  - "coverage"
-          "num_split_reads": 
-            plot:
-              ticks:
-                scale: "sqrt"
-                aux-domain-columns:
-                  - "num_split_reads"
           "breakpoint_sequence":
             custom: ?breakpoint_link
           "gene_names":
