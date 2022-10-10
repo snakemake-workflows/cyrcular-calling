@@ -26,6 +26,7 @@ rule cyrcular_annotate_graph:
         graph="results/calling/graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",
+        repeat_annotation="resources/repeat_masker.hg38.fa.out.gz",
     output:
         annotated="results/calling/graphs/{group}.annotated.graph",
     threads: 1
@@ -37,7 +38,7 @@ rule cyrcular_annotate_graph:
         "../envs/cyrcular.yaml"
     shell:
         """
-        cyrcular graph annotate --reference {input.reference} --gene-annotation {input.gene_annotation} --regulatory-annotation {input.regulatory_annotation} --output {output.annotated} {input.graph} 2> {log}
+        cyrcular graph annotate --reference {input.reference} --gene-annotation {input.gene_annotation} --regulatory-annotation {input.regulatory_annotation} --repeat-annotation {input.repeat_annotation} --output {output.annotated} {input.graph} 2> {log}
         """
 
 
@@ -153,6 +154,22 @@ rule download_regulatory_annotation:
         "../envs/wget.yaml"
     shell:
         """wget https://ftp.ensembl.org/pub/release-{params.release}/regulation/homo_sapiens/homo_sapiens.GRCh38.Regulatory_Build.regulatory_features.20220201.gff.gz --no-check-certificate -O {output} 2> {log}"""
+
+
+rule download_repeatmasker_annotation:
+    output:
+        "resources/repeat_masker.hg38.fa.out.gz",
+    log:
+        "logs/download_repeatmasker_annotation.log",
+    params:
+        release=get_annotation_release,
+    benchmark:
+        "benchmarks/download_repeatmasker_annotation.txt"
+    cache: True
+    conda:
+        "../envs/wget.yaml"
+    shell:
+        """wget https://repeatmasker.org/genomes/hg38/RepeatMasker-rm405-db20140131/hg38.fa.out.gz --no-check-certificate -O {output} 2> {log}"""
 
 
 rule download_gene_annotation:
