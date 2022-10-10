@@ -33,7 +33,7 @@ rule filter_overview_table:
 
 rule filter_varlociraptor:
     input:
-        calls="results/calling/calls/annotated/{group}.bcf",
+        calls="results/calling/calls/merged/{group}.bcf",
     output:
         fdr_calls="results/calling/calls/filtered_fdr/{group}.bcf",
     log:
