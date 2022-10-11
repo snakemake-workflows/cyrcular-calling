@@ -4,25 +4,90 @@
     "type": "fit",
     "contains": "padding"
   },
-  "resolve": {
-    "scale": {
-      "x": "shared",
-      "y": "independent"
-    }
-  },
-  "bounds": "flush",
   "title": {
-    "text": "Circle length histograms and pseudo-scatter plots by category"
+    "text": "Number of circles and circle lengths by category"
   },
+  "transform": [
+    {
+      "calculate": "indexof(['coding', 'regulatory', 'intronic', 'discarded'], datum.category)",
+      "as": "order"
+    }
+  ],
   "vconcat": [
+    {
+      "width": 800,
+      "resolve": {
+        "scale": {
+          "x": "independent",
+          "y": "independent"
+        }
+      },
+      "mark": {
+        "type": "bar",
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "category",
+          "aggregate": "count",
+          "stack": true,
+          "title": "number of circles"
+        },
+        "color": {
+          "field": "category",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "discarded"
+          ],
+          "scale": {
+            "type": "ordinal",
+            "scheme": "set1",
+            "domain": [
+              "coding",
+              "regulatory",
+              "intronic",
+              "discarded"
+            ]
+          }
+        },
+        "order": {
+          "field": "order",
+          "type": "nominal"
+        },
+        "href": {
+          "field": "link to category"
+        }
+      }
+    },
     {
       "mark": {
         "type": "bar"
       },
-      "height": 100,
-      "width": 800,
+      "height": 150,
+      "width": 200,
+      "resolve": {
+        "scale": {
+          "x": "shared",
+          "y": "shared"
+        }
+      },
       "encoding": {
         "x": {
+          "bin": {
+            "minstep": 500,
+            "maxbins": 100
+          },
+          "field": "circle_length",
+          "type": "quantitative"
+        },
+        "y": {
+          "title": "circle count",
+          "aggregate": "count",
+          "type": "quantitative"
+        },
+        "color": {
           "field": "category",
           "type": "nominal",
           "sort": [
@@ -42,83 +107,9 @@
             ]
           }
         },
-        "y": {
+        "column": {
           "field": "category",
-          "aggregate": "count",
-          "title": "circle count",
-          "type": "quantitative"
-        },
-        "color": {
-          "field": "category",
-          "sort": [
-            "coding",
-            "regulatory",
-            "intronic",
-            "discarded"
-          ],
-          "scale": {
-            "type": "ordinal",
-            "scheme": "set1",
-            "domain": [
-              "coding",
-              "regulatory",
-              "intronic",
-              "discarded"
-            ]
-          }
-        },
-        "href": {
-          "field": "link to category"
-        }
-      }
-    },
-    {
-      "mark": {
-        "type": "tick",
-        "thickness": 2,
-        "tooltip": true
-      },
-      "height": 150,
-      "width": 800,
-      "encoding": {
-        "x": {
-          "bin": true,
-          "field": "circle_length",
-          "title": ""
-        },
-        "y": {
-          "aggregate": "count",
-          "title": "count",
-          "scale": {
-            "type": "sqrt"
-          },
-          "stack": null
-        },
-        "xOffset": {
-          "field": "category"
-        },
-        "color": {
-          "field": "category"
-        }
-      }
-    },
-    {
-      "mark": {
-        "type": "circle"
-      },
-      "height": 200,
-      "width": 800,
-      "transform": [
-        {
-          "calculate": "datum.prob_present / 2 + random() / 10 - 0.05",
-          "as": "jitter"
-        }
-      ],
-      "encoding": {
-        "row": {
-          "field": "category",
-          "type": "ordinal",
-          "spacing": 0,
+          "type": "nominal",
           "sort": [
             "coding",
             "regulatory",
@@ -126,44 +117,14 @@
             "discarded"
           ]
         },
-        "x": {
-          "field": "circle_length",
-          "type": "quantitative",
-          "title": "circle length"
+        "order": {
+          "field": "order",
+          "type": "nominal"
         },
-        "y": {
-          "field": "jitter",
-          "axis": {
-            "title": null,
-            "labels": false
-          }
-        },
-        "color": {
-          "field": "category"
-        },
-        "opacity": {
-          "field": "prob_present"
-        },
-        "tooltip": [
-          {
-            "field": "event_id",
-            "type": "nominal"
-          },
-          {
-            "field": "regions",
-            "type": "nominal"
-          },
-          {
-            "field": "circle_length",
-            "type": "quantitative"
-          }
-        ]
+        "href": {
+          "field": "link to category"
+        }
       }
     }
   ],
-  "config": {
-    "legend": {
-      "disable": true
-    }
-  }
 }
