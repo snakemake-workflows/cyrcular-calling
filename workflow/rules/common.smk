@@ -9,6 +9,7 @@ validate(config, schema="../schemas/config.schema.yaml")
 
 wildcard_constraints:
     sample="[a-zA-Z_0-9-]+",
+    group="[a-zA-Z_0-9-]+",
 
 
 def read_samples():
