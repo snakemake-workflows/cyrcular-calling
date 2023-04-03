@@ -2,5 +2,5 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - graphviz =2.49.0
+  - graphviz =7.1
   - imagemagick =7.1

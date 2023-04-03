@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bcftools =1.15
-  - htslib =1.15
-  - vembrane =0.12
+  - bcftools =1.16
+  - htslib =1.16
+  - vembrane =1.0
   - ripgrep =13.0

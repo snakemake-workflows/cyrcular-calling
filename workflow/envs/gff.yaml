@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - bcftools =1.13
-  - pysam
-  - gff3sort
+  - bcftools =1.16
+  - pysam =0.20
+  - gff3sort =0.1
   - pigz =2.6
