@@ -219,9 +219,7 @@ def get_fastqs(wildcards):
 
 # black wasn't happy about the inline version of this in the params section
 def varlociraptor_filtering_mode(wildcards):
-    return (
-        "--local" if config["calling"]["filter"]["fdr-control"]["local"] is True else ""
-    )
+    return config["calling"]["filter"]["fdr-control"].get("mode", "local-smart")
 
 
 class Region:

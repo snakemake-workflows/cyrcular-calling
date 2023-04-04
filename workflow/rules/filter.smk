@@ -48,5 +48,5 @@ rule filter_varlociraptor:
         mode=varlociraptor_filtering_mode,
     shell:
         """
-        varlociraptor filter-calls control-fdr {params.mode} --events PRESENT --var BND --fdr {params.fdr} {input.calls} | varlociraptor decode-phred | bcftools sort -m 4G -Ob > {output.fdr_calls} 2> {log}
+        varlociraptor filter-calls control-fdr --mode {params.mode} --events PRESENT --var BND --fdr {params.fdr} {input.calls} | varlociraptor decode-phred | bcftools sort -m 4G -Ob > {output.fdr_calls} 2> {log}
         """
