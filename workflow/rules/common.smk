@@ -271,7 +271,7 @@ CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Sup
 
 
 def get_annotation_release(wildcards):
-    return config["calling"]["reference"].get("annotation", {}).get("release", "107")
+    return config["calling"]["reference"].get("release", "107")
 
 
 def get_detail_tables_for_report(wildcards):

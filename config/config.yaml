@@ -17,10 +17,6 @@ calling:
     # Genome build
     build: GRCh38
 
-    # For now, fixed to ensembl annotation in GFF3 format
-    annotation:
-      release: 107
-
 
   # minimum read depth (used during covered segment identification)
   min_read_depth: 2
