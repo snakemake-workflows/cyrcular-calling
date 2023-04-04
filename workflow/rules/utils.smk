@@ -15,9 +15,9 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        f"resources/{config['calling']['reference']['name']}.fasta",
+        f"resources/{config['reference']['name']}.fasta",
     output:
-        f"resources/{config['calling']['reference']['name']}.fasta.fai",
+        f"resources/{config['reference']['name']}.fasta.fai",
     log:
         "logs/genome-faidx.log",
     cache: True
