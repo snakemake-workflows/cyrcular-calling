@@ -17,14 +17,15 @@ reference:
   build: GRCh38
 
 
-# minimum read depth (used during covered segment identification)
-min_read_depth: 2
-# minimum number of split reads (edges with less than this number will be removed from the graph)
-min_split_reads: 5
-# maximum number of plausible circular paths generated for each strongly connected component of the graph
-max_paths_per_component: 15
-# maximum deletion length which is encoded as an edge / a breakend event. Can be useful for unmapped regions in the reference.
-max_deletion_length: 10000
+cyrcular:
+  # minimum read depth (used during covered segment identification)
+  min_read_depth: 2
+  # minimum number of split reads (edges with less than this number will be removed from the graph)
+  min_split_reads: 5
+  # maximum number of plausible circular paths generated for each strongly connected component of the graph
+  max_paths_per_component: 15
+  # maximum deletion length which is encoded as an edge / a breakend event. Can be useful for unmapped regions in the reference.
+  max_deletion_length: 10000
 
 filter:
   # varlociraptor fdr control

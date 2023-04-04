@@ -158,10 +158,10 @@ rule circle_bnds:
         "benchmarks/cyrcular/{sample}.txt"
     threads: 4
     params:
-        min_read_depth=config["min_read_depth"],  # 2
-        min_split_reads=config["min_split_reads"],  # 5
-        max_paths_per_component=config["max_paths_per_component"],  # 15
-        max_deletion_length=config["max_deletion_length"],  # 10000,
+        min_read_depth=config["cyrcular"]["min_read_depth"],  # 2
+        min_split_reads=config["cyrcular"]["min_split_reads"],  # 5
+        max_paths_per_component=config["cyrcular"]["max_paths_per_component"],  # 15
+        max_deletion_length=config["cyrcular"]["max_deletion_length"],  # 10000,
     conda:
         "../envs/cyrcular.yaml"
     shell:
