@@ -7,11 +7,6 @@ REFERENCE = config["calling"]["reference"]["name"]
 validate(config, schema="../schemas/config.schema.yaml")
 
 
-wildcard_constraints:
-    sample="[a-zA-Z_0-9-]+",
-    group="[a-zA-Z_0-9-]+",
-
-
 def read_samples():
     samples = (
         pd.read_csv(
@@ -36,8 +31,14 @@ def read_samples():
 
 
 samples = read_samples()
+SAMPLES = list(sorted(set(samples["sample"])))
 GROUPS = list(sorted(set(samples["group"])))
 CATEGORIES = ["coding", "regulatory", "intronic"]
+
+
+wildcard_constraints:
+    sample="|".join(SAMPLES),
+    group="|".join(GROUPS),
 
 
 def read_units():
