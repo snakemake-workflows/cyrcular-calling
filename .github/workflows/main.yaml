@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Test workflow (local FASTQs)
+    - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
         directory: .test
