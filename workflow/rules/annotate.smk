@@ -69,6 +69,8 @@ rule sort_bcf_header:
         sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
     log:
         "logs/sort_bcf_header/{group}.log",
+    conda:
+        "../envs/python.yaml"
     script:
         "../scripts/sort_bcf_header.py"
 
