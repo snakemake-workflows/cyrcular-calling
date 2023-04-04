@@ -20,7 +20,7 @@ rule minimap2_bam:
 
 rule minimap2_index:
     input:
-        target=config["reference"]["path"],
+        target="resources/genome.fasta",
     output:
         f"results/calling/index/{REFERENCE}.mmi",
     log:

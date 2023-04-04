@@ -28,10 +28,6 @@ properties:
   reference:
     type: object
     properties:
-      name:
-        type: string
-      path:
-        type: string
       n_chromosomes:
         type: integer
       species:
@@ -41,7 +37,6 @@ properties:
       build:
         type: string
     required:
-      - name
       - species
       - release
       - build

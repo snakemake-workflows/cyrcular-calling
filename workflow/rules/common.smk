@@ -2,8 +2,6 @@ import pandas as pd
 import re
 from snakemake.utils import validate
 
-REFERENCE = config["reference"]["name"]
-
 validate(config, schema="../schemas/config.schema.yaml")
 
 

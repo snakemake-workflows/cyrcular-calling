@@ -2,11 +2,6 @@ samples: config/samples.tsv
 units: config/units.tsv
 
 reference:
-  # if `path` is not set, name should just be "genome" atm.
-  name: "example_ref"
-  # Custom path overrides everything below that, if file exists
-  # (in that case, path must match "resources/" + name + ".fasta")
-  path: "resources/example_ref.fasta"
   # The first n entries of the FASTA will be considered.
   n_chromosomes: 2
   # Ensembl species name

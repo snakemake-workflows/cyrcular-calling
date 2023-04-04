@@ -71,8 +71,8 @@ rule varlociraptor_call:
 
 rule varlociraptor_alignment_properties:
     input:
-        ref=config["reference"]["path"],
-        ref_idx=config["reference"]["path"] + ".fai",
+        ref="resources/genome.fasta",
+        ref_idx="resources/genome.fasta.fai",
         bam="results/calling/mapping/{sample}.bam",
     output:
         "results/calling/alignment-properties/{sample}.json",
@@ -86,8 +86,8 @@ rule varlociraptor_alignment_properties:
 
 rule varlociraptor_preprocess:
     input:
-        ref=config["reference"]["path"],
-        ref_idx=config["reference"]["path"] + ".fai",
+        ref="resources/genome.fasta",
+        ref_idx="resources/genome.fasta.fai",
         candidates=get_group_candidates,
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
@@ -146,8 +146,8 @@ rule circle_bnds:
     input:
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
-        ref=config["reference"]["path"],
-        ref_index=f'{config["reference"]["path"]}.fai',
+        ref="resources/genome.fasta",
+        ref_index="resources/genome.fasta.fai",
     output:
         bnds="results/calling/candidates/{sample}.bcf",
         graph="results/calling/graphs/{sample}.graph",
