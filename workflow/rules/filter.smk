@@ -44,7 +44,7 @@ rule filter_varlociraptor:
         "../envs/varlociraptor.yaml"
     threads: 1
     params:
-        fdr=config["calling"]["filter"]["fdr-control"].get("threshold", 0.05),
+        fdr=config["filter"]["fdr-control"].get("threshold", 0.05),
         mode=varlociraptor_filtering_mode,
     shell:
         """

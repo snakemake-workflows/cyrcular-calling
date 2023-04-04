@@ -20,7 +20,7 @@ rule minimap2_bam:
 
 rule minimap2_index:
     input:
-        target=config["calling"]["reference"]["path"],
+        target=config["reference"]["path"],
     output:
         f"results/calling/index/{REFERENCE}.mmi",
     log:

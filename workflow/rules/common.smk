@@ -2,7 +2,7 @@ import pandas as pd
 import re
 from snakemake.utils import validate
 
-REFERENCE = config["calling"]["reference"]["name"]
+REFERENCE = config["reference"]["name"]
 
 validate(config, schema="../schemas/config.schema.yaml")
 
@@ -10,7 +10,7 @@ validate(config, schema="../schemas/config.schema.yaml")
 def read_samples():
     samples = (
         pd.read_csv(
-            config["calling"]["samples"],
+            config["samples"],
             sep="\t",
             dtype={"sample": str, "group": str},
             comment="#",
@@ -44,7 +44,7 @@ wildcard_constraints:
 def read_units():
     units = (
         pd.read_csv(
-            config["calling"]["units"],
+            config["units"],
             sep="\t",
             dtype={"sample": str, "unit": str},
             comment="#",
@@ -219,7 +219,7 @@ def get_fastqs(wildcards):
 
 # black wasn't happy about the inline version of this in the params section
 def varlociraptor_filtering_mode(wildcards):
-    return config["calling"]["filter"]["fdr-control"].get("mode", "local-smart")
+    return config["filter"]["fdr-control"].get("mode", "local-smart")
 
 
 class Region:
@@ -270,7 +270,7 @@ CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Sup
 
 
 def get_annotation_release(wildcards):
-    return config["calling"]["reference"].get("release", "107")
+    return config["reference"].get("release", "107")
 
 
 def get_detail_tables_for_report(wildcards):
