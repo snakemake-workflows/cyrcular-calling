@@ -1,7 +1,0 @@
-channels:
-  - conda-forge
-  - bioconda
-dependencies:
-  - pandas =1.5
-  - pandarallel =1.6
-  - dinopy =2.2

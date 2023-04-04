@@ -17,7 +17,6 @@ include: "rules/map.smk"
 include: "rules/call.smk"
 include: "rules/annotate.smk"
 include: "rules/filter.smk"
-include: "rules/table.smk"
 include: "rules/plot.smk"
 include: "rules/datavzrd.smk"
 
