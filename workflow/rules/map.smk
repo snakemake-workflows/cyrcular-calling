@@ -1,7 +1,7 @@
 
 rule minimap2_bam:
     input:
-        target=f"results/calling/index/{REFERENCE}.mmi",  # can be either genome index or genome fasta
+        target="results/calling/index/genome.mmi",  # can be either genome index or genome fasta
         query=get_minimap2_input,
     output:
         "results/calling/mapping/{sample}.bam",
@@ -22,11 +22,11 @@ rule minimap2_index:
     input:
         target="resources/genome.fasta",
     output:
-        f"results/calling/index/{REFERENCE}.mmi",
+        "results/calling/index/genome.mmi",
     log:
-        f"logs/minimap2_index/{REFERENCE}.log",
+        "logs/minimap2_index/genome.log",
     benchmark:
-        f"benchmarks/minimap2_index/{REFERENCE}.txt"
+        "benchmarks/minimap2_index/genome.txt"
     params:
         extra="",  # optional additional args
     cache: True
