@@ -6,7 +6,7 @@ properties:
     type: string
     description: group name/identifier (alphanumeric string, that may additionally contain '_' and '-'). One sample can consist of multiple units.
     pattern: "^[a-zA-Z_0-9-]+$"
-  sample:
+  sample_name:
     type: string
     description: sample name/identifier (alphanumeric string, that may additionally contain '_' and '-')
     pattern: "^[a-zA-Z_0-9-]+$"
@@ -20,5 +20,5 @@ properties:
 
 required:
   - group
-  - sample
+  - sample_name
   - platform

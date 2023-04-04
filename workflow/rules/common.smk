@@ -12,17 +12,17 @@ def read_samples():
         pd.read_csv(
             config["samples"],
             sep="\t",
-            dtype={"sample": str, "group": str},
+            dtype={"sample_name": str, "group": str},
             comment="#",
         )
-        .set_index("sample", drop=False)
+        .set_index("sample_name", drop=False)
         .sort_index()
     )
 
     def _group_or_sample(row):
         group = row.get("group", None)
         if pd.isnull(group):
-            return row["sample"]
+            return row["sample_name"]
         return group
 
     samples["group"] = [_group_or_sample(row) for _, row in samples.iterrows()]
@@ -31,7 +31,7 @@ def read_samples():
 
 
 samples = read_samples()
-SAMPLES = list(sorted(set(samples["sample"])))
+SAMPLES = list(sorted(set(samples["sample_name"])))
 GROUPS = list(sorted(set(samples["group"])))
 CATEGORIES = ["coding", "regulatory", "intronic"]
 
@@ -46,10 +46,10 @@ def read_units():
         pd.read_csv(
             config["units"],
             sep="\t",
-            dtype={"sample": str, "unit": str},
+            dtype={"sample_name": str, "unit_name": str},
             comment="#",
         )
-        .set_index(["sample", "unit"], drop=False)
+        .set_index(["sample_name", "unit_name"], drop=False)
         .sort_index()
     )
     validate(units, schema="../schemas/units.schema.yaml")
@@ -90,17 +90,17 @@ def get_group_candidates(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "illumina_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'illumina'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'illumina'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "nanopore_with_illumina_support":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     else:
@@ -130,17 +130,17 @@ def get_observations(wildcards):
 
     observations = []
 
-    has_nanopore = len(s.query("platform == 'nanopore'")["sample"]) > 0
-    has_illumina = len(s.query("platform == 'illumina'")["sample"]) > 0
+    has_nanopore = len(s.query("platform == 'nanopore'")["sample_name"]) > 0
+    has_illumina = len(s.query("platform == 'illumina'")["sample_name"]) > 0
 
     if has_nanopore:
-        for sample_nanopore in list(s.query("platform == 'nanopore'")["sample"]):
+        for sample_nanopore in list(s.query("platform == 'nanopore'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
             )
 
     if has_illumina:
-        for sample_illumina in list(s.query("platform == 'illumina'")["sample"]):
+        for sample_illumina in list(s.query("platform == 'illumina'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
             )

@@ -1,3 +1,1 @@
-group	sample	platform
-Example	Example	nanopore
-#Example	Example_Illumina	illumina
+group	sample_name	platform
