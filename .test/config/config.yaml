@@ -8,7 +8,7 @@ reference:
   # (in that case, path must match "resources/" + name + ".fasta")
   path: "resources/example_ref.fasta"
   # The first n entries of the FASTA will be considered.
-  n_chromosomes: 25
+  n_chromosomes: 2
   # Ensembl species name
   species: homo_sapiens
   # Ensembl release
