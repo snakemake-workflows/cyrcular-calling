@@ -10,7 +10,7 @@ rule get_genome:
         release=config["calling"]["reference"]["release"],
     cache: True
     wrapper:
-        "v1.0.0/bio/reference/ensembl-sequence"
+        "v1.25.0/bio/reference/ensembl-sequence"
 
 
 rule genome_faidx:
@@ -22,4 +22,4 @@ rule genome_faidx:
         "logs/genome-faidx.log",
     cache: True
     wrapper:
-        "v1.0.0/bio/samtools/faidx"
+        "v1.25.0/bio/samtools/faidx"

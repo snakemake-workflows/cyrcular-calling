@@ -10,7 +10,7 @@ rule bcf_index:
     benchmark:
         "benchmarks/bcftools/index/{prefix}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/index"
+        "v1.25.0/bio/bcftools/index"
 
 
 rule bcftools_concat:
@@ -32,7 +32,7 @@ rule bcftools_concat:
         uncompressed_bcf=False,
         extra="-a",  # optional parameters for bcftools concat (except -o)
     wrapper:
-        "v1.0.0/bio/bcftools/concat"
+        "v1.25.0/bio/bcftools/concat"
 
 
 rule bcftools_sort:
@@ -46,7 +46,7 @@ rule bcftools_sort:
     benchmark:
         "benchmarks/sort_calls/{group}.{scatteritem}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/sort"
+        "v1.25.0/bio/bcftools/sort"
 
 
 rule varlociraptor_call:
@@ -141,7 +141,7 @@ rule sort_bnd_bcfs:
     benchmark:
         "benchmarks/sort_bnds/{sample}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/sort"
+        "v1.25.0/bio/bcftools/sort"
 
 
 rule circle_bnds:

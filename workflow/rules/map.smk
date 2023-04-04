@@ -15,7 +15,7 @@ rule minimap2_bam:
         sort_extra=lambda wc, threads: f"-@ {min(threads, 4)}",  # optional: extra arguments for samtools/picard
     threads: workflow.cores // 2
     wrapper:
-        "v1.0.0/bio/minimap2/aligner"
+        "v1.25.0/bio/minimap2/aligner"
 
 
 rule minimap2_index:
@@ -34,7 +34,7 @@ rule minimap2_index:
     # https://lh3.github.io/minimap2/minimap2.html
     threads: 3
     wrapper:
-        "v1.0.0/bio/minimap2/index"
+        "v1.25.0/bio/minimap2/index"
 
 
 rule merge_fastqs:
@@ -70,7 +70,7 @@ rule samtools_index:
     # Samtools takes additional threads through its option -@
     threads: 12  # This value - 1 will be sent to -@
     wrapper:
-        "v1.0.0/bio/samtools/index"
+        "v1.25.0/bio/samtools/index"
 
 
 rule samtools_faidx:
@@ -87,4 +87,4 @@ rule samtools_faidx:
     # Samtools takes additional threads through its option -@
     threads: 12  # This value - 1 will be sent to -@
     wrapper:
-        "v1.0.0/bio/samtools/faidx"
+        "v1.25.0/bio/samtools/faidx"
