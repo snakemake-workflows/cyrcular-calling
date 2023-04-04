@@ -12,7 +12,7 @@ rule minimap2_bam:
     params:
         extra=get_minimap2_mapping_params,  # optional
         sorting="coordinate",  # optional: Enable sorting. Possible values: 'none', 'queryname' or 'coordinate'
-        sort_extra=lambda wc: f"-@ 4",  # optional: extra arguments for samtools/picard
+        sort_extra=lambda wc, threads: f"-@ {min(threads, 4)}",  # optional: extra arguments for samtools/picard
     threads: workflow.cores // 2
     wrapper:
         "v1.0.0/bio/minimap2/aligner"
@@ -30,7 +30,9 @@ rule minimap2_index:
     params:
         extra="",  # optional additional args
     cache: True
-    threads: workflow.cores
+    # Minimap2 uses at most three threads when indexing target sequences:
+    # https://lh3.github.io/minimap2/minimap2.html
+    threads: 3
     wrapper:
         "v1.0.0/bio/minimap2/index"
 
