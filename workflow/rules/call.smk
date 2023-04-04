@@ -40,7 +40,6 @@ rule bcftools_sort:
         "results/calling/calls/initial/{group}.{scatteritem}.bcf",
     output:
         "results/calling/calls/initial_sorted/{group}.{scatteritem}.bcf",
-    threads: 2
     log:
         "logs/sort_calls/{group}.{scatteritem}.log",
     benchmark:
@@ -135,7 +134,6 @@ rule sort_bnd_bcfs:
         "results/calling/candidates/{sample}.bcf",
     output:
         "results/calling/candidates/{sample}.sorted.bcf",
-    threads: 2
     log:
         "logs/sort_bnds/{sample}.log",
     benchmark:
