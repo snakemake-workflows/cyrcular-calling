@@ -3,6 +3,4 @@ channels:
   - bioconda
 dependencies:
   - bcftools =1.16
-  - htslib =1.16
-  - vembrane =1.0
   - ripgrep =13.0
