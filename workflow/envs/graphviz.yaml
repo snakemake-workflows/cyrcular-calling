@@ -1,5 +1,4 @@
 channels:
-  - bioconda
   - conda-forge
 dependencies:
   - graphviz =7.1

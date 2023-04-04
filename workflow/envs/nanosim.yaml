@@ -1,5 +1,5 @@
 channels:
-  - bioconda
   - conda-forge
+  - bioconda
 dependencies:
   - nanosim ==3.1
