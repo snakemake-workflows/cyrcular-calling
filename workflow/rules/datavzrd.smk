@@ -48,7 +48,7 @@ rule copy_qc_plots_for_datavzrd:
     log:
         "logs/datavzrd/copy_qc_plots/{group}.{category}.log",
     conda:
-        "../envs/pandas.yaml"    
+        "../envs/pandas.yaml"
     script:
         "../scripts/copy_qc_plots.py"
 
@@ -67,7 +67,7 @@ rule copy_graph_plots_for_datavzrd:
     log:
         "logs/datavzrd/copy_graph_plots/{group}.{category}.log",
     conda:
-        "../envs/pandas.yaml"    
+        "../envs/pandas.yaml"
     script:
         "../scripts/copy_graph_plots.py"
 

@@ -16,7 +16,6 @@ rule filter_overview_table:
         "../scripts/filter_overview_table.py"
 
 
-
 rule filter_varlociraptor:
     input:
         calls="results/calling/calls/merged/{group}.bcf",
