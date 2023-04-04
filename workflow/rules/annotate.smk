@@ -67,8 +67,6 @@ rule sort_bcf_header:
         header="results/calling/calls/filtered_fdr/{group}.header.txt",
     output:
         sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
-    conda:
-        "../envs/gff.yaml"
     log:
         "logs/sort_bcf_header/{group}.log",
     script:
