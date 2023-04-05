@@ -49,6 +49,9 @@ jobs:
           echo "$GITHUB_HOME/.cargo/bin" >> $GITHUB_PATH
           echo "/github/home/.cargo/bin" >> $GITHUB_PATH
           echo "$GITHUB_WORKSPACE/.cargo/bin" >> $GITHUB_PATH
+          echo "GITHUB_HOME: $GITHUB_HOME"
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo "GITHUB_PATH: $GITHUB_PATH"
     - name: install ruget via cargo-install
       uses: baptiste0928/cargo-install@v2.0.0
       with:
