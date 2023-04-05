@@ -43,28 +43,12 @@ jobs:
       - Formatting
     steps:
     - uses: actions/checkout@v3
-    - name: Add .cargo/bin to PATH
-      run: |
-          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
-          echo "$GITHUB_HOME/.cargo/bin" >> $GITHUB_PATH
-          echo "/github/home/.cargo/bin" >> $GITHUB_PATH
-          echo "$GITHUB_WORKSPACE/.cargo/bin" >> $GITHUB_PATH
-          echo "GITHUB_HOME: $GITHUB_HOME"
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          echo "GITHUB_PATH: $GITHUB_PATH"
-    - name: install ruget via cargo-install
-      uses: baptiste0928/cargo-install@v2.0.0
-      with:
-        crate: ruget
-        version: "^0.4"
-        locked: false
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--configfile .test/config/config.yaml --use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache"
-        stagein: 'echo "GITHUB_PATH: $GITHUB_PATH"; echo "PATH: $PATH";'
 
     - name: Test report
       uses: snakemake/snakemake-github-action@v1
