@@ -45,20 +45,16 @@ jobs:
     - uses: actions/checkout@v3
     - name: Add .cargo/bin to PATH
       run: |
-          echo $CARGO_HOME
-          echo "$CARGO_HOME/bin" >> $GITHUB_PATH
-          echo "$HOME/.cargo/bin"
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
           echo "/github/home/.cargo/bin" >> $GITHUB_PATH
-          echo "$GITHUB_WORKSPACE/.cargo/bin"
           echo "$GITHUB_WORKSPACE/.cargo/bin" >> $GITHUB_PATH
-          echo "GITHUB_PATH: $GITHUB_PATH"
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--configfile .test/config/config.yaml --use-conda --show-failed-logs -j 10 --conda-cleanup-pkgs cache"
+        stagein: 'echo "GITHUB_PATH: $GITHUB_PATH"; echo "PATH: $PATH";'
 
     - name: Test report
       uses: snakemake/snakemake-github-action@v1
