@@ -46,8 +46,14 @@ jobs:
     - name: Add .cargo/bin to PATH
       run: |
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          echo "$GITHUB_HOME/.cargo/bin" >> $GITHUB_PATH
           echo "/github/home/.cargo/bin" >> $GITHUB_PATH
           echo "$GITHUB_WORKSPACE/.cargo/bin" >> $GITHUB_PATH
+    - name: install ruget via cargo-install
+      uses: baptiste0928/cargo-install@v2.0.0
+      with:
+        crate: ruget
+        version: "^0.4"
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
