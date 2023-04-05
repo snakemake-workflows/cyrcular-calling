@@ -43,7 +43,9 @@ jobs:
       - Formatting
     steps:
     - uses: actions/checkout@v3
-
+    - name: Add .cargo/bin to PATH
+      run: |
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
