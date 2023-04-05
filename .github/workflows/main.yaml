@@ -46,6 +46,8 @@ jobs:
     - name: Add .cargo/bin to PATH
       run: |
           echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+          echo "/github/home/.cargo/bin" >> $GITHUB_PATH
+          echo "$GITHUB_WORKSPACE/.cargo/bin" >> $GITHUB_PATH
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
