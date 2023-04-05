@@ -54,6 +54,7 @@ jobs:
       with:
         crate: ruget
         version: "^0.4"
+        locked: false
     - name: Test workflow
       uses: snakemake/snakemake-github-action@v1
       with:
