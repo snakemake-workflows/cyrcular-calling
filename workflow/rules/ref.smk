@@ -57,7 +57,7 @@ rule minimap2_index:
         "v1.25.0/bio/minimap2/index"
 
 
-
+# TODO: create new ENSEMBL-REGULATORY-ANNOTATION snakemake wrapper
 rule download_regulatory_annotation:
     output:
         "resources/regulatory_annotation.gff3.gz",
@@ -74,6 +74,11 @@ rule download_regulatory_annotation:
         """wget https://ftp.ensembl.org/pub/release-{params.release}/regulation/homo_sapiens/homo_sapiens.GRCh38.Regulatory_Build.regulatory_features.20220201.gff.gz --no-check-certificate -O {output} 2> {log}"""
 
 
+# TODO: if possible, make this rule / repeat mask retrieval more general (as in more genome builds and species possible)
+# ideas: create repeat masks ourselves, using:
+# * repeatmasker: https://repeatmasker.org/RepeatMasker/ (pin version in envs/repeatmasker.yaml)
+# * dfam: https://www.dfam.org/home (pin version in config.yaml)
+# * ensembl reference specified in config.yaml
 rule download_repeatmasker_annotation:
     output:
         "resources/repeat_masker.hg38.fa.out.gz",
