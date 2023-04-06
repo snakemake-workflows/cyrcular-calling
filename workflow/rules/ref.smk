@@ -56,6 +56,7 @@ rule download_repeatmasker_annotation:
     shell:
         """wget https://repeatmasker.org/genomes/hg38/RepeatMasker-rm405-db20140131/hg38.fa.out.gz --no-check-certificate -O {output} 2> {log}"""
 
+
 rule download_gene_annotation:
     output:
         "resources/gene_annotation.gff3.gz",
