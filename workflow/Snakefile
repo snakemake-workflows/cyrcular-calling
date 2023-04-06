@@ -12,7 +12,7 @@ scattergather:
 
 
 include: "rules/common.smk"
-include: "rules/utils.smk"
+include: "rules/ref.smk"
 include: "rules/map.smk"
 include: "rules/call.smk"
 include: "rules/annotate.smk"
