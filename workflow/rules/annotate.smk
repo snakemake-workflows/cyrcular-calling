@@ -3,7 +3,7 @@
 
 rule cyrcular_generate_tables:
     input:
-        reference="resources/genome.fasta",
+        reference=rules.get_genome.output.genome,
         graph="results/calling/graphs/{group}.annotated.graph",
         bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
     output:
@@ -22,7 +22,7 @@ rule cyrcular_generate_tables:
 
 rule cyrcular_annotate_graph:
     input:
-        reference="resources/genome.fasta",
+        reference=rules.get_genome.output.genome,
         graph="results/calling/graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",

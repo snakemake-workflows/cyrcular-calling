@@ -20,7 +20,7 @@ rule minimap2_bam:
 
 rule minimap2_index:
     input:
-        target="resources/genome.fasta",
+        target=rules.get_genome.output.genome,
     output:
         "results/calling/index/genome.mmi",
     log:

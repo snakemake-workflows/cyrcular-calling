@@ -1,6 +1,11 @@
 rule get_genome:
     output:
-        "resources/genome.fasta",
+        genome=expand(
+            "resources/{species}.{build}.{release}.fasta",
+            species=config["reference"]["species"],
+            build=config["reference"]["build"],
+            release=config["reference"]["release"],
+        ),
     log:
         "logs/get-genome.log",
     params:
@@ -15,9 +20,12 @@ rule get_genome:
 
 rule genome_faidx:
     input:
-        "resources/genome.fasta",
+        rules.get_genome.output.genome,
     output:
-        "resources/genome.fasta.fai",
+        index=expand(
+            "{genome}.fai",
+            genome=rules.get_genome.output.genome,
+        ),
     log:
         "logs/genome-faidx.log",
     cache: True
