@@ -1,6 +1,6 @@
 rule minimap2_bam:
     input:
-        target=rules.minimap2_index.output.index, # can be either genome index or genome fasta
+        target=rules.minimap2_index.output.index,  # can be either genome index or genome fasta
         query=get_minimap2_input,
     output:
         "results/calling/mapping/{sample}.bam",
