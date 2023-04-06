@@ -1,7 +1,6 @@
-
 rule minimap2_bam:
     input:
-        target="results/calling/index/genome.mmi",  # can be either genome index or genome fasta
+        target=rules.minimap2_index.output.index, # can be either genome index or genome fasta
         query=get_minimap2_input,
     output:
         "results/calling/mapping/{sample}.bam",
@@ -16,25 +15,6 @@ rule minimap2_bam:
     threads: workflow.cores // 2
     wrapper:
         "v1.25.0/bio/minimap2/aligner"
-
-
-rule minimap2_index:
-    input:
-        target=rules.get_genome.output.genome,
-    output:
-        "results/calling/index/genome.mmi",
-    log:
-        "logs/minimap2_index/genome.log",
-    benchmark:
-        "benchmarks/minimap2_index/genome.txt"
-    params:
-        extra="",  # optional additional args
-    cache: True
-    # Minimap2 uses at most three threads when indexing target sequences:
-    # https://lh3.github.io/minimap2/minimap2.html
-    threads: 3
-    wrapper:
-        "v1.25.0/bio/minimap2/index"
 
 
 rule merge_fastqs:

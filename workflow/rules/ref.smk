@@ -33,6 +33,31 @@ rule genome_faidx:
         "v1.25.0/bio/samtools/faidx"
 
 
+rule minimap2_index:
+    input:
+        target=rules.get_genome.output.genome,
+    output:
+        index=expand(
+            "resources/{species}.{build}.{release}.mmi",
+            species=config["reference"]["species"],
+            build=config["reference"]["build"],
+            release=config["reference"]["release"],
+        ),
+    log:
+        "logs/minimap2_index/genome.log",
+    benchmark:
+        "benchmarks/minimap2_index/genome.txt"
+    params:
+        extra="",  # optional additional args
+    cache: True
+    # Minimap2 uses at most three threads when indexing target sequences:
+    # https://lh3.github.io/minimap2/minimap2.html
+    threads: 3
+    wrapper:
+        "v1.25.0/bio/minimap2/index"
+
+
+
 rule download_regulatory_annotation:
     output:
         "resources/regulatory_annotation.gff3.gz",
