@@ -92,7 +92,7 @@ rule download_repeatmasker_annotation:
     conda:
         "../envs/wget.yaml"
     shell:
-        """wget https://repeatmasker.org/genomes/hg38/RepeatMasker-rm405-db20140131/hg38.fa.out.gz --no-check-certificate -O {output} 2> {log}"""
+        """wget http://www.repeatmasker.org/genomes/hg38/RepeatMasker-rm406-dfam2.0/hg38.fa.out.gz --no-check-certificate -O {output} 2> {log}"""
 
 
 rule download_gene_annotation:
