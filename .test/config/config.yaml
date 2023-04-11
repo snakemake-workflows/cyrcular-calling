@@ -8,10 +8,10 @@ reference:
   #       CONFIG.YAML REQUIRES ADJUSTING THE FILENAME OF RESOURCE/*.FASTA
   # Ensembl species name
   species: homo_sapiens
-  # Ensembl release
-  release: 107
   # Genome build
   build: GRCh38
+  # Ensembl release
+  release: 107
 
 
 cyrcular:

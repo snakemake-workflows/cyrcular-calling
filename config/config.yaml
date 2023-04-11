@@ -6,10 +6,10 @@ reference:
   n_chromosomes: 25
   # Ensembl species name
   species: homo_sapiens
-  # Ensembl release
-  release: 107
   # Genome build
   build: GRCh38
+  # Ensembl release
+  release: 107
 
 
 cyrcular:
