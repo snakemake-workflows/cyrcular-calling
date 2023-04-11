@@ -2,8 +2,6 @@ samples: config/samples.tsv
 units: config/units.tsv
 
 reference:
-  # The first n entries of the FASTA will be considered.
-  n_chromosomes: 2
   # NOTE: ANY CHANGE OF SPECIES, RELEASE OR BUILD IN THIS TESTING
   #       CONFIG.YAML REQUIRES ADJUSTING THE FILENAME OF RESOURCE/*.FASTA
   # Ensembl species name

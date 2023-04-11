@@ -2,8 +2,6 @@ samples: config/samples.tsv
 units: config/units.tsv
 
 reference:
-  # The first n entries of the FASTA will be considered.
-  n_chromosomes: 25
   # Ensembl species name
   species: homo_sapiens
   # Genome build

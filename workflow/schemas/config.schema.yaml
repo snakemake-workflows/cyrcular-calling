@@ -28,8 +28,6 @@ properties:
   reference:
     type: object
     properties:
-      n_chromosomes:
-        type: integer
       species:
         type: string
       release:
@@ -40,7 +38,6 @@ properties:
       - species
       - release
       - build
-      - n_chromosomes
   cyrcular:
     type: object
     properties:
