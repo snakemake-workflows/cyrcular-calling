@@ -4,12 +4,14 @@ units: config/units.tsv
 reference:
   # The first n entries of the FASTA will be considered.
   n_chromosomes: 2
+  # NOTE: ANY CHANGE OF SPECIES, RELEASE OR BUILD IN THIS TESTING
+  #       CONFIG.YAML REQUIRES ADJUSTING THE FILENAME OF RESOURCE/*.FASTA
   # Ensembl species name
-  species: fantasy
+  species: homo_sapiens
   # Ensembl release
-  release: 3000
+  release: 107
   # Genome build
-  build: some_build
+  build: GRCh38
 
 
 cyrcular:
