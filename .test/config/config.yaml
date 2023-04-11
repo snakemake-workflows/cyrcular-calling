@@ -5,11 +5,11 @@ reference:
   # The first n entries of the FASTA will be considered.
   n_chromosomes: 2
   # Ensembl species name
-  species: homo_sapiens
+  species: fantasy
   # Ensembl release
-  release: 107
+  release: 3000
   # Genome build
-  build: GRCh38
+  build: some_build
 
 
 cyrcular:
