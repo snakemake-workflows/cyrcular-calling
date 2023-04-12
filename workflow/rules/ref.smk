@@ -74,25 +74,20 @@ rule download_regulatory_annotation:
         """wget https://ftp.ensembl.org/pub/release-{params.release}/regulation/homo_sapiens/homo_sapiens.GRCh38.Regulatory_Build.regulatory_features.20220201.gff.gz --no-check-certificate -O {output} 2> {log}"""
 
 
-# TODO: if possible, make this rule / repeat mask retrieval more general (as in more genome builds and species possible)
-# ideas: create repeat masks ourselves, using:
-# * repeatmasker: https://repeatmasker.org/RepeatMasker/ (pin version in envs/repeatmasker.yaml)
-# * dfam: https://www.dfam.org/home (pin version in config.yaml)
-# * ensembl reference specified in config.yaml
 rule download_repeatmasker_annotation:
     output:
-        "resources/repeat_masker.hg38.fa.out.gz",
+        "resources/repeat_masker.fa.out.gz",
     log:
         "logs/download_repeatmasker_annotation.log",
     params:
-        release=get_annotation_release,
+        download_link=config["reference"].get("repeat_masker_download_link", ""),
     benchmark:
         "benchmarks/download_repeatmasker_annotation.txt"
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     conda:
         "../envs/wget.yaml"
     shell:
-        """wget http://www.repeatmasker.org/genomes/hg38/RepeatMasker-rm406-dfam2.0/hg38.fa.out.gz --no-check-certificate -O {output} 2> {log}"""
+        """wget {params.download_link} --no-check-certificate -O {output} 2> {log}"""
 
 
 rule download_gene_annotation:

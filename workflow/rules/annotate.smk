@@ -26,7 +26,7 @@ rule cyrcular_annotate_graph:
         graph="results/calling/graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",
-        repeat_annotation="resources/repeat_masker.hg38.fa.out.gz",
+        repeat_annotation=lambda wc: "resources/repeat_masker.fa.out.gz" if config["reference"].get("repeat_masker_download_link", "") else "",
     output:
         annotated="results/calling/graphs/{group}.annotated.graph",
     threads: 1
@@ -36,10 +36,16 @@ rule cyrcular_annotate_graph:
         "benchmarks/cyrcular_annotate_graph/{group}.txt"
     conda:
         "../envs/cyrcular.yaml"
+    params:
+        repeat_annotation=lambda wc, input: f"  --repeat-annotation {input.repeat_annotation} " if config["reference"].get("repeat_masker_download_link", "") else "",
     shell:
-        """
-        cyrcular graph annotate --reference {input.reference} --gene-annotation {input.gene_annotation} --regulatory-annotation {input.regulatory_annotation} --repeat-annotation {input.repeat_annotation} --output {output.annotated} {input.graph} 2> {log}
-        """
+        "cyrcular graph annotate "
+        "  --reference {input.reference} "
+        "  --gene-annotation {input.gene_annotation} "
+        "  --regulatory-annotation {input.regulatory_annotation} "
+        "  --output {output.annotated} "
+        "  {input.graph} "
+        "2> {log} "
 
 
 rule reheader_filtered_bcf:
