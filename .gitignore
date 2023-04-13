@@ -2,11 +2,13 @@
 .test/logs/**
 .test/resources/*.fai
 .test/resources/*.gz
+.test/resources/*.mmi
 .test/results/**
 .test/.snakemake/**
 benchmarks/**
 logs/**
 resources/*.fai
 resources/*.gz
+resources/*.mmi
 results/**
 .snakemake/**
