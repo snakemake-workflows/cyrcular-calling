@@ -31,7 +31,7 @@ def read_samples():
 samples = read_samples()
 SAMPLES = list(sorted(set(samples["sample_name"])))
 GROUPS = list(sorted(set(samples["group"])))
-CATEGORIES = ["coding", "regulatory", "intronic"]
+CATEGORIES = ["coding", "regulatory", "intronic", "discarded"]
 
 
 wildcard_constraints:
