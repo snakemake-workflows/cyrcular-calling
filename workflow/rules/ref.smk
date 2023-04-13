@@ -64,7 +64,7 @@ rule download_regulatory_annotation:
     log:
         "logs/download_regulatory_annotation.log",
     params:
-        release=get_annotation_release,
+        release=config["reference"].get("release", "107"),
     benchmark:
         "benchmarks/download_regulatory_annotation.txt"
     cache: "omit-software"  # save space and time with between workflow caching (see docs)

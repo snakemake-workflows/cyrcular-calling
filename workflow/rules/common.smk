@@ -267,10 +267,6 @@ def parse_bnd_alt(s: str):
 CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
 
 
-def get_annotation_release(wildcards):
-    return config["reference"].get("release", "107")
-
-
 def get_detail_tables_for_report(wildcards):
     from pathlib import Path
 
