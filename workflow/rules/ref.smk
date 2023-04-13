@@ -98,7 +98,7 @@ rule download_gene_annotation:
         build=config["reference"]["build"],
         release=config["reference"]["release"],
         flavor="",  # optional, e.g. chr_patch_hapl_scaff, see Ensembl FTP.
-        # branch="plants",  # optional: specify branch
+        branch="",  # optional: specify branch
     log:
         "logs/download_gene_annotation.log",
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
