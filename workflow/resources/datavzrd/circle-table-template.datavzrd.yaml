@@ -39,7 +39,7 @@ __definitions__:
   - |
     breakpoint_link = f"""
     function(value, row) {{
-        let primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM=Homo%20sapiens&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
+        let primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM={params.species.replace("_", "%20")}&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
         let seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
         let link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}">${{seq}}</a>`;
         return link;
@@ -51,7 +51,7 @@ __definitions__:
         let regions = value.split(",");
         let links = [];
         for (let region of regions) {{
-            let ensembl_url = `https://www.ensembl.org/Homo_sapiens/Location/Overview?r=${{region}}`;
+            let ensembl_url = `https://www.ensembl.org/{params.species}/Location/Overview?r=${{region}}`;
             let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}">${{region}}</a>`;
             links.push(link);
         }}
