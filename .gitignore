@@ -7,8 +7,6 @@
 .test/.snakemake/**
 benchmarks/**
 logs/**
-resources/*.fai
-resources/*.gz
-resources/*.mmi
+resources/**
 results/**
 .snakemake/**
