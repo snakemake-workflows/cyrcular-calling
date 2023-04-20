@@ -267,20 +267,23 @@ def parse_bnd_alt(s: str):
 CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
 
 
-def get_detail_tables_for_report(wildcards):
+def get_detail_tables_group_circle_path_for_report(wildcards, input):
     from pathlib import Path
 
     group = wildcards.group
     res = []
-    folder = f"results/calling/tables/{group}/{group}_details"
+    folder = input.detail_tables
     group_tsv = pd.read_csv(
-        f"results/calling/tables/{group}/{group}_categorized_overview.tsv", sep="\t"
+        input.categorized_overview_table, sep="\t"
     )
     keep_event_ids = set(group_tsv["event_id"])
     detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
     event_ids = [
-        f'{Path(path).stem.split("_")[1]}-{Path(path).stem.split("_")[3]}'
-        for path in detail_table_files
+        f"{m.group(1)}-{m.group(2)}"
+        for m in [
+            re.match("graph_([^_]+)_circle_([^_]+)_segments.tsv", path)
+            for path in detail_table_files
+        ]
     ]
     for event_id, detail_file in zip(event_ids, detail_table_files):
         if event_id not in keep_event_ids:
