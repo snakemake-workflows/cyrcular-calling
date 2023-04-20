@@ -19,7 +19,6 @@ rule render_datavzrd_config:
         overview_tables=lambda wc, input: [
                 (file.split("_overview.")[1].replace(".tsv",""), file) for file in list(input.overview_tables)
             ],
-        group=lambda wc: wc.group,
         detail_tables=get_detail_tables_for_report,
         summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
         species=config["reference"]["species"],

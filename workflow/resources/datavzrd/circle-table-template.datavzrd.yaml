@@ -70,7 +70,7 @@ datasets:
       links:
         circle-details:
           column: event_id
-          view: ?f"detail-{params.group}-{{value}}-segments"
+          view: ?f"detail-{wildcards.group}-{{value}}-segments"
   ?for category, circle, path in params.detail_tables:
     ?f"data-{category}-{circle}-segments":
       path: ?path
