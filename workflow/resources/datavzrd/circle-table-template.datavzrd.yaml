@@ -6,7 +6,7 @@ __definitions__:
     function(value, row) {{
       let graph_id = row["graph_id"]
       let circle_id = row["circle_id"]
-      let link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/graph_${{graph_id}}_${{circle_id}}.html' target='_blank'>${{value}}</a>`;
+      let link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/graph_${{graph_id}}_${{circle_id}}.html' target="_blank" rel="noopener noreferrer">${{value}}</a>`;
       return link;
     }}
     """
@@ -14,7 +14,7 @@ __definitions__:
     graph_link = f"""
     function(value, row) {{
       let graph_id = value;
-      let link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/graph_${{graph_id}}.pdf' target='_blank'>${{value}}</a>`;
+      let link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/graph_${{graph_id}}.pdf' target="_blank" rel="noopener noreferrer">${{value}}</a>`;
       return link;
     }}
     """
@@ -27,7 +27,7 @@ __definitions__:
             let genes = value.split(",");
             let rows = "";
             for (let g of genes) {{
-                rows = `${{rows}}<tr><td><a data-toggle="tooltip" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${{g}}" target="_blank">${{g}}</a></td></tr>`;
+                rows = `${{rows}}<tr><td><a data-toggle="tooltip" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${{g}}" target="_blank" rel="noopener noreferrer">${{g}}</a></td></tr>`;
             }};
             let table = `<div style="overflow-y: auto; max-height: 30vh; min-width: 140px;"><table class="table"><thead><tr><th scope="col">Genes</th></tr></thead><tbody>${{rows}}</tbody></table></div>`;
             let button = `<a href='#' tabindex='0' class='btn btn-primary' role='button' data-toggle='popover' data-placement="left" data-trigger='focus' data-html='true' data-content='${{table}}'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
@@ -41,7 +41,7 @@ __definitions__:
     function(value, row) {{
         let primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM={params.species.replace("_", "%20")}&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
         let seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
-        let link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}">${{seq}}</a>`;
+        let link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}" target="_blank" rel="noopener noreferrer">${{seq}}</a>`;
         return link;
     }}
     """
@@ -52,7 +52,7 @@ __definitions__:
         let links = [];
         for (let region of regions) {{
             let ensembl_url = `https://www.ensembl.org/{params.species}/Location/Overview?r=${{region}}`;
-            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}">${{region}}</a>`;
+            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}" target="_blank" rel="noopener noreferrer">${{region}}</a>`;
             links.push(link);
         }}
         let result = links.join(", ");
