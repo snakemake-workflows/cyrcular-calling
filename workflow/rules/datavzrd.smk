@@ -1,6 +1,11 @@
 from pathlib import Path
 
-
+# TODO: rethink overview_tables and detail_tables
+#       I am not really sure how to do this well, but I think we could have
+#       just one circle-centered and one segment-centered table each, with 
+#       proper filtering (probably also in the linkouts from the overview plot_
+#       and with current plot linkouts for graph and circle as collapsed /
+#       hidden plots right there in the table. We'll need to discuss.
 rule render_datavzrd_config:
     input:
         template=workflow.source_path(
