@@ -8,5 +8,7 @@
 benchmarks/**
 logs/**
 resources/**
+!resources/datavzrd/**
+!resources/summary_plot.json
 results/**
 .snakemake/**
