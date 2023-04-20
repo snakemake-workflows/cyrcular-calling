@@ -200,4 +200,4 @@ views:
       Note that circles in category `discarded` are not included in this report.
     dataset: ?f"overview-table"
     render-plot:
-      spec-path: ?params.summary_spec
+      spec-path: ?input.summary_spec

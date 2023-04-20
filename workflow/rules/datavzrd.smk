@@ -11,6 +11,7 @@ rule render_datavzrd_config:
         template=workflow.source_path(
             "../resources/datavzrd/circle-table-template.datavzrd.yaml"
         ),
+        summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
         categorized_overview_table="results/calling/tables/{group}/{group}_categorized_overview.tsv",
         overview_tables=expand(
             "results/calling/tables/{{group}}/{{group}}_overview.{category}.tsv",
@@ -25,7 +26,6 @@ rule render_datavzrd_config:
                 (file.split("_overview.")[1].replace(".tsv",""), file) for file in list(input.overview_tables)
             ],
         detail_tables=lambda wc, input: get_detail_tables_group_circle_path_for_report(wc, input),
-        summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
     log:
         "logs/datavzrd_render/{group}.log",
     template_engine:
