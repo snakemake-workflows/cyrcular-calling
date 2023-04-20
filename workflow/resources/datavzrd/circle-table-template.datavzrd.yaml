@@ -2,15 +2,6 @@ name: Circle calls
 
 __definitions__:
   - | 
-    circle_qc_plot_link = f"""
-    function(value, row) {{
-      let graph_id = row["graph_id"]
-      let circle_id = row["circle_id"]
-      let link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='../qc_plots/graph_${{graph_id}}_${{circle_id}}.html' target="_blank" rel="noopener noreferrer">${{value}}</a>`;
-      return link;
-    }}
-    """
-  - | 
     graph_link = f"""
     function(value, row) {{
       let graph_id = value;
@@ -117,7 +108,7 @@ views:
           "graph_id":
             custom: ?graph_link
           "circle_id":
-            custom: ?circle_qc_plot_link
+            custom-path: ?input.circle_qc_plot_link_formatter
           "regions":
             custom: ?regions_links
           "regex('prob_(.+)')":
@@ -170,7 +161,7 @@ views:
           "graph_id":
             custom: ?graph_link
           "circle_id":
-            custom: ?circle_qc_plot_link
+            custom-path: ?input.circle_qc_plot_link_formatter
           "kind":
             plot:
               heatmap:

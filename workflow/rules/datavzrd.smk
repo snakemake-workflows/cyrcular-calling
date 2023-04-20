@@ -18,6 +18,9 @@ rule render_datavzrd_config:
             category=CATEGORIES,
         ),
         detail_tables="results/calling/tables/{group}/{group}_details/",
+        circle_qc_plot_link_formatter=workflow.source_path(
+            "../scripts/circle_qc_plot_link_formatter.js"
+        ),
     output:
         "results/datavzrd/{group}.datavzrd.yaml",
     params:
