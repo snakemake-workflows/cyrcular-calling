@@ -167,6 +167,10 @@ views:
       dataset: ?f"data-{group}-{circle}-segments"
       render-table:
         columns:
+          "graph_id":
+            custom: ?graph_link
+          "circle_id":
+            custom: ?circle_qc_plot_link
           "kind":
             plot:
               heatmap:
