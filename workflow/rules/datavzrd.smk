@@ -8,21 +8,18 @@ rule render_datavzrd_config:
         ),
         categorized_overview_tables="results/calling/tables/{group}/{group}_categorized_overview.tsv",
         overview_tables=expand(
-            "results/calling/tables/{{group}}/{{group}}_overview.{category}.tsv",
+            "results/calling/tables/{group}/{group}_overview.{category}.tsv",
             category=CATEGORIES,
+            allow_missing=True,
         ),
         detail_tables="results/calling/tables/{group}/{group}_details/",
     output:
         "results/datavzrd/{group}.datavzrd.yaml",
     params:
         categories=CATEGORIES,
-        overview_tables=lambda wc: [
-            (
-                category,
-                f"results/calling/tables/{wc.group}/{wc.group}_overview.{category}.tsv",
-            )
-            for category in CATEGORIES
-        ],
+        overview_tables=lambda wc, input: [
+                (file.split("_overview.")[1].replace(".tsv",""), file) for file in list(input.overview_tables)
+            ],
         categorized_table=lambda wc: f"results/calling/tables/{wc.group}/{wc.group}_categorized_overview.tsv",
         group=lambda wc: wc.group,
         detail_tables=get_detail_tables_for_report,
