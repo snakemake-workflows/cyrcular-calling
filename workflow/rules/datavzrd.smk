@@ -24,6 +24,9 @@ rule render_datavzrd_config:
         graph_link_formatter=workflow.source_path(
             "../scripts/graph_link_formatter.js"
         ),
+        gene_card_link_formatter=workflow.source_path(
+            "../scripts/gene_card_link_formatter.js"
+        ),
     output:
         "results/datavzrd/{group}.datavzrd.yaml",
     params:
