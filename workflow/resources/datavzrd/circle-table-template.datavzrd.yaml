@@ -1,6 +1,9 @@
 name: Circle calls
 
 __definitions__:
+  # TODO: once yaml-specified parameters become available for custom-path 
+  #       functions in datavzrd, move breakpoint_link to separate:
+  #       workflow/scripts/breakpoint_link_formatter.js 
   - |
     breakpoint_link = f"""
     function(value, row) {{
@@ -10,6 +13,9 @@ __definitions__:
         return link;
     }}
     """
+  # TODO: once yaml-specified parameters become available for custom-path 
+  #       functions in datavzrd, move regions_links to separate:
+  #       workflow/scripts/regions_links_formatter.js 
   - |
     regions_links = f"""
     function(value, row) {{
