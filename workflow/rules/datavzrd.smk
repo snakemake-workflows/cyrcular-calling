@@ -8,9 +8,8 @@ rule render_datavzrd_config:
         ),
         categorized_overview_tables="results/calling/tables/{group}/{group}_categorized_overview.tsv",
         overview_tables=expand(
-            "results/calling/tables/{group}/{group}_overview.{category}.tsv",
+            "results/calling/tables/{{group}}/{{group}}_overview.{category}.tsv",
             category=CATEGORIES,
-            allow_missing=True,
         ),
         detail_tables="results/calling/tables/{group}/{group}_details/",
     output:
