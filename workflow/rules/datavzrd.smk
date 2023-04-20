@@ -21,7 +21,6 @@ rule render_datavzrd_config:
             ],
         detail_tables=get_detail_tables_for_report,
         summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
-        species=config["reference"]["species"],
     log:
         "logs/datavzrd_render/{group}.log",
     template_engine:
