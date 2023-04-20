@@ -273,9 +273,7 @@ def get_detail_tables_group_circle_path_for_report(wildcards, input):
     group = wildcards.group
     res = []
     folder = input.detail_tables
-    group_tsv = pd.read_csv(
-        input.categorized_overview_table, sep="\t"
-    )
+    group_tsv = pd.read_csv(input.categorized_overview_table, sep="\t")
     keep_event_ids = set(group_tsv["event_id"])
     detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
     event_ids = [

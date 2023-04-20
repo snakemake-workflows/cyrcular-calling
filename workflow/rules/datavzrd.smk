@@ -1,8 +1,9 @@
 from pathlib import Path
 
+
 # TODO: rethink overview_tables and detail_tables
 #       I am not really sure how to do this well, but I think we could have
-#       just one circle-centered and one segment-centered table each, with 
+#       just one circle-centered and one segment-centered table each, with
 #       proper filtering (probably also in the linkouts from the overview plot_
 #       and with current plot linkouts for graph and circle as collapsed /
 #       hidden plots right there in the table. We'll need to discuss.
@@ -21,9 +22,7 @@ rule render_datavzrd_config:
         circle_qc_plot_link_formatter=workflow.source_path(
             "../scripts/circle_qc_plot_link_formatter.js"
         ),
-        graph_link_formatter=workflow.source_path(
-            "../scripts/graph_link_formatter.js"
-        ),
+        graph_link_formatter=workflow.source_path("../scripts/graph_link_formatter.js"),
         gene_card_link_formatter=workflow.source_path(
             "../scripts/gene_card_link_formatter.js"
         ),
@@ -32,9 +31,12 @@ rule render_datavzrd_config:
     params:
         categories=CATEGORIES,
         overview_tables=lambda wc, input: [
-                (file.split("_overview.")[1].replace(".tsv",""), file) for file in list(input.overview_tables)
-            ],
-        detail_tables=lambda wc, input: get_detail_tables_group_circle_path_for_report(wc, input),
+            (file.split("_overview.")[1].replace(".tsv", ""), file)
+            for file in list(input.overview_tables)
+        ],
+        detail_tables=lambda wc, input: get_detail_tables_group_circle_path_for_report(
+            wc, input
+        ),
     log:
         "logs/datavzrd_render/{group}.log",
     template_engine:
