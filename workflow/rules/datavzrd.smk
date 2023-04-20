@@ -21,6 +21,9 @@ rule render_datavzrd_config:
         circle_qc_plot_link_formatter=workflow.source_path(
             "../scripts/circle_qc_plot_link_formatter.js"
         ),
+        graph_link_formatter=workflow.source_path(
+            "../scripts/graph_link_formatter.js"
+        ),
     output:
         "results/datavzrd/{group}.datavzrd.yaml",
     params:
