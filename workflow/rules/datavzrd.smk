@@ -41,7 +41,7 @@ rule copy_qc_plots_for_datavzrd:
         marker="results/tmp/{group}.{category}.qc_plots.marker",
     params:
         output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/circles-{wc.category}/qc_plots"
+            f"results/datavzrd-report/{wc.group}.fdr-controlled/qc_plots"
         ),
     log:
         "logs/datavzrd/copy_qc_plots/{group}.{category}.log",
@@ -60,7 +60,7 @@ rule copy_graph_plots_for_datavzrd:
         marker="results/tmp/{group}.{category}.graph_plots.marker",
     params:
         output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/circles-{wc.category}/graphs"
+            f"results/datavzrd-report/{wc.group}.fdr-controlled/graphs"
         ),
     log:
         "logs/datavzrd/copy_graph_plots/{group}.{category}.log",
