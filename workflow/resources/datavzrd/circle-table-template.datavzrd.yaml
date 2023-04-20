@@ -71,8 +71,8 @@ datasets:
         circle-details:
           column: event_id
           view: ?f"detail-{wildcards.group}-{{value}}-segments"
-  ?for category, circle, path in params.detail_tables:
-    ?f"data-{category}-{circle}-segments":
+  ?for group, circle, path in params.detail_tables:
+    ?f"data-{group}-{circle}-segments":
       path: ?path
       separator: "\t"
   "overview-table":
