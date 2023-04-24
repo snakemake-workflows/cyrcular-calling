@@ -66,6 +66,7 @@ rule reheader_filtered_bcf:
         ## bcftools re-header seems to re-order entries
         # bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
         ## so we have to re-header ourselves
+        ## TODO: reinvestigate to find a cleaner solution
         """
         cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf} 2> {log}
         """
