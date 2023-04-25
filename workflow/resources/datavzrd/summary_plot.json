@@ -9,7 +9,7 @@
   },
   "transform": [
     {
-      "calculate": "indexof(['coding', 'regulatory', 'intronic', 'discarded'], datum.category)",
+      "calculate": "indexof(['coding', 'regulatory', 'intronic', 'other'], datum.category)",
       "as": "order"
     }
   ],
@@ -39,7 +39,7 @@
             "coding",
             "regulatory",
             "intronic",
-            "discarded"
+            "other"
           ],
           "scale": {
             "type": "ordinal",
@@ -48,7 +48,7 @@
               "coding",
               "regulatory",
               "intronic",
-              "discarded"
+              "other"
             ]
           }
         },
@@ -94,7 +94,7 @@
             "coding",
             "regulatory",
             "intronic",
-            "discarded"
+            "other"
           ],
           "scale": {
             "type": "ordinal",
@@ -103,7 +103,7 @@
               "coding",
               "regulatory",
               "intronic",
-              "discarded"
+              "other"
             ]
           }
         },
@@ -114,7 +114,7 @@
             "coding",
             "regulatory",
             "intronic",
-            "discarded"
+            "other"
           ]
         },
         "order": {

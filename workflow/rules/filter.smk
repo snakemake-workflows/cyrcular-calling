@@ -6,7 +6,7 @@ rule filter_overview_table:
         coding="results/calling/tables/{group}/{group}_overview.coding.tsv",
         regulatory="results/calling/tables/{group}/{group}_overview.regulatory.tsv",
         intronic="results/calling/tables/{group}/{group}_overview.intronic.tsv",
-        discarded="results/calling/tables/{group}/{group}_overview.discarded.tsv",
+        other="results/calling/tables/{group}/{group}_overview.other.tsv",
         categorized="results/calling/tables/{group}/{group}_categorized_overview.tsv",
     log:
         "logs/filter_overview_table/{group}.log",

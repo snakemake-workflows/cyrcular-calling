@@ -166,9 +166,8 @@ views:
       | `coding`     | at least 1 exon                                                 | 
       | `regulatory` | not `coding` and at least 1 regulatory feature annotated        |
       | `intronic`   | neither `coding` nor `regulatory` and at least 1 gene annotated |
-      | `discarded`  | none of the above                                               |
+      | `other`  | none of the above                                               |
       
-      Note that circles in category `discarded` are not included in this report.
     dataset: ?f"overview-table"
     render-plot:
       spec-path: ?input.summary_spec
