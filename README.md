@@ -5,7 +5,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.7863209.svg)](https://doi.org/10.5281/zenodo.7863209)
 
-A Snakemake workflow for ecDNA detection in nanopore sequencing reads derived from DNA samples enriched for circular DNA.
+A Snakemake workflow for ecDNA detection in Nanopore or Illumina sequencing reads derived from DNA samples enriched for circular DNA.
 
 
 ## Usage
