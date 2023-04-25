@@ -1,0 +1,130 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "autosize": {
+    "type": "fit",
+    "contains": "padding"
+  },
+  "title": {
+    "text": "Number of circles and circle lengths by category"
+  },
+  "transform": [
+    {
+      "calculate": "indexof(['coding', 'regulatory', 'intronic', 'other'], datum.category)",
+      "as": "order"
+    }
+  ],
+  "vconcat": [
+    {
+      "width": 800,
+      "resolve": {
+        "scale": {
+          "x": "independent",
+          "y": "independent"
+        }
+      },
+      "mark": {
+        "type": "bar",
+        "tooltip": true
+      },
+      "encoding": {
+        "x": {
+          "field": "category",
+          "aggregate": "count",
+          "stack": true,
+          "title": "number of circles"
+        },
+        "color": {
+          "field": "category",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "other"
+          ],
+          "scale": {
+            "type": "ordinal",
+            "scheme": "set1",
+            "domain": [
+              "coding",
+              "regulatory",
+              "intronic",
+              "other"
+            ]
+          }
+        },
+        "order": {
+          "field": "order",
+          "type": "nominal"
+        },
+        "href": {
+          "field": "link to category"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "bar"
+      },
+      "height": 150,
+      "width": 200,
+      "resolve": {
+        "scale": {
+          "x": "shared",
+          "y": "shared"
+        }
+      },
+      "encoding": {
+        "x": {
+          "bin": {
+            "minstep": 500,
+            "maxbins": 100
+          },
+          "field": "circle_length",
+          "type": "quantitative"
+        },
+        "y": {
+          "title": "circle count",
+          "aggregate": "count",
+          "type": "quantitative"
+        },
+        "color": {
+          "field": "category",
+          "type": "nominal",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "other"
+          ],
+          "scale": {
+            "type": "ordinal",
+            "scheme": "set1",
+            "domain": [
+              "coding",
+              "regulatory",
+              "intronic",
+              "other"
+            ]
+          }
+        },
+        "column": {
+          "field": "category",
+          "type": "nominal",
+          "sort": [
+            "coding",
+            "regulatory",
+            "intronic",
+            "other"
+          ]
+        },
+        "order": {
+          "field": "order",
+          "type": "nominal"
+        },
+        "href": {
+          "field": "link to category"
+        }
+      }
+    }
+  ]
+}

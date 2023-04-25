@@ -1,13 +1,13 @@
-$schema: "http://json-schema.org/draft-04/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 
 description: row of the units.tsv, representing a sequencing unit, i.e. single-end or paired-end data
 type: object
 properties:
-  sample:
+  sample_name:
     type: string
     pattern: "^[a-zA-Z_0-9-]+$"
     description: sample name/id the unit has been sequenced from (alphanumeric string, that may additionally contain '_' and '-')
-  unit:
+  unit_name:
     type: string
     pattern: "^[a-zA-Z_0-9-]+$"
     description: unit id (alphanumeric string, that may additionally contain '_' and '-')
@@ -20,6 +20,6 @@ properties:
     description: path to second FASTQ file (leave empty in case of single-end)
 
 required:
-  - sample
-  - unit
+  - sample_name
+  - unit_name
   - fq1

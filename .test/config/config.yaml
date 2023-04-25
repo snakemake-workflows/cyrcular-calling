@@ -2,6 +2,8 @@ samples: config/samples.tsv
 units: config/units.tsv
 
 reference:
+  # NOTE: ANY CHANGE OF SPECIES, RELEASE OR BUILD IN THIS TESTING
+  #       CONFIG.YAML REQUIRES ADJUSTING THE FILENAME OF RESOURCE/*.FASTA
   # Ensembl species name
   species: homo_sapiens
   # Genome build

@@ -1,7 +1,6 @@
-
 rule minimap2_bam:
     input:
-        target=f"results/calling/index/{REFERENCE}.mmi",  # can be either genome index or genome fasta
+        target=rules.minimap2_index.output.index,  # can be either genome index or genome fasta
         query=get_minimap2_input,
     output:
         "results/calling/mapping/{sample}.bam",
@@ -12,27 +11,10 @@ rule minimap2_bam:
     params:
         extra=get_minimap2_mapping_params,  # optional
         sorting="coordinate",  # optional: Enable sorting. Possible values: 'none', 'queryname' or 'coordinate'
-        sort_extra=lambda wc: f"-@ {workflow.cores * 0.5}",  # optional: extra arguments for samtools/picard
-    threads: workflow.cores * 0.5
+        sort_extra=lambda wc, threads: f"-@ {min(threads, 4)}",  # optional: extra arguments for samtools/picard
+    threads: workflow.cores // 2
     wrapper:
-        "v1.0.0/bio/minimap2/aligner"
-
-
-rule minimap2_index:
-    input:
-        target=config["calling"]["reference"]["path"],
-    output:
-        f"results/calling/index/{REFERENCE}.mmi",
-    log:
-        f"logs/minimap2_index/{REFERENCE}.log",
-    benchmark:
-        f"benchmarks/minimap2_index/{REFERENCE}.txt"
-    params:
-        extra="",  # optional additional args
-    cache: True
-    threads: workflow.cores
-    wrapper:
-        "v1.0.0/bio/minimap2/index"
+        "v1.25.0/bio/minimap2/aligner"
 
 
 rule merge_fastqs:
@@ -68,7 +50,7 @@ rule samtools_index:
     # Samtools takes additional threads through its option -@
     threads: 12  # This value - 1 will be sent to -@
     wrapper:
-        "v1.0.0/bio/samtools/index"
+        "v1.25.0/bio/samtools/index"
 
 
 rule samtools_faidx:
@@ -85,4 +67,4 @@ rule samtools_faidx:
     # Samtools takes additional threads through its option -@
     threads: 12  # This value - 1 will be sent to -@
     wrapper:
-        "v1.0.0/bio/samtools/faidx"
+        "v1.25.0/bio/samtools/faidx"

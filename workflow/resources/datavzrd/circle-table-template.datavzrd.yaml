@@ -1,100 +1,173 @@
 name: Circle calls
 
 __definitions__:
-  - | 
-    event_link = f"""
-    function(value, row) {{
-      var filename = value.replace("_circle_", "_");
-      var link = `<a data-toggle="tooltip" data-placement="top" title="QC plot" href='./qc_plots/${{filename}}.html' target='_blank'>${{value}}</a>`;
-      return link;
-    }}
-    """
-  - | 
-    graph_link = f"""
-    function(value, row) {{
-      var filename = value;
-      var link = `<a data-toggle="tooltip" data-placement="top" title="graph structure" href='./graphs/${{filename}}.pdf' target='_blank'>${{value}}</a>`;
-      return link;
-    }}
-    """
-  - |
-    gene_link = f"""
-    function(value, row) {{
-        $(function () {{
-            $('[data-toggle="tooltip"]').tooltip()
-        }});
-            let genes = value.split(";");
-            let rows = "";
-            for (let g of genes) {{
-                rows = `${{rows}}<tr><td><a data-toggle="tooltip" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${{g}}" target="_blank">${{g}}</a></td></tr>`;
-            }};
-            let table = `<div style="overflow-y: auto; max-height: 30vh; min-width: 140px;"><table class="table"><thead><tr><th scope="col">Genes</th></tr></thead><tbody>${{rows}}</tbody></table></div>`;
-            let button = `<a href='#' tabindex='0' class='btn btn-primary' role='button' data-toggle='popover' data-placement="left" data-trigger='focus' data-html='true' data-content='${{table}}'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
-            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/>
-            </svg></a>`;
-            return button;
-    }}
-    """
+  # TODO: once yaml-specified parameters become available for custom-path 
+  #       functions in datavzrd, move breakpoint_link to separate:
+  #       workflow/scripts/breakpoint_link_formatter.js 
   - |
     breakpoint_link = f"""
     function(value, row) {{
-        var primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM=Homo%20sapiens&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
-        var seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
-        var link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}">${{seq}}</a>`;
+        let primer_blast_url = `https://www.ncbi.nlm.nih.gov/tools/primer-blast/index.cgi?LINK_LOC=bookmark&INPUT_SEQUENCE=${{value}}&PRIMER5_END=900&PRIMER3_START=1100&PRIMER_PRODUCT_MIN=200&PRIMER_PRODUCT_MAX=1200&ORGANISM={config["reference"]["species"].replace("_", "%20")}&NEWWIN=on&NEWWIN=on&SHOW_SVIEWER=true`;
+        let seq = "…" + value.substring(value.length / 2 - 10, value.length / 2 + 10) + "…";
+        let link = `<a data-toggle="tooltip" data-placement="top" title="primer-blast" href="${{primer_blast_url}}" target="_blank" rel="noopener noreferrer">${{seq}}</a>`;
         return link;
     }}
     """
+  # TODO: once yaml-specified parameters become available for custom-path 
+  #       functions in datavzrd, move regions_links to separate:
+  #       workflow/scripts/regions_links_formatter.js 
+  - |
+    regions_links = f"""
+    function(value, row) {{
+        let regions = value.split(",");
+        let links = [];
+        for (let region of regions) {{
+            let ensembl_url = `https://www.ensembl.org/{config["reference"]["species"]}/Location/Overview?r=${{region}}`;
+            let link = `<a data-toggle="tooltip" data-placement="top" title="ensembl-genome-browser" href="${{ensembl_url}}" target="_blank" rel="noopener noreferrer">${{region}}</a>`;
+            links.push(link);
+        }}
+        let result = links.join(", ");
+        return result;
+    }}
+    """
+
+default-view: "summary-plot"
 
 datasets:
-  ?for group, path in zip(params.groups, params.calls):
-    ?f"{group}-circles":
+  ?for category, path in params.overview_tables:
+    ?f"data-{category}-circles":
       path: ?path
-      separator: ","
+      separator: "\t"
+      links:
+        circle-details:
+          column: event_id
+          view: ?f"detail-{wildcards.group}-{{value}}-segments"
+  ?for group, circle, path in params.detail_tables:
+    ?f"data-{group}-{circle}-segments":
+      path: ?path
+      separator: "\t"
+  "overview-table":
+    path: ?input.categorized_overview_table
+    separator: "\t"
+    links:
+      link to category:
+        column: category
+        view: "circles-{value}"
+    #   link to circle:
+    #     column: event_id
+    #     table-row: ?f"data-{CATEGORY}-circles/event_id"
 
 views:
-  ?for group in params.groups:
-    ?f"circles-{group}":
-      desc: |
-        Overview table showing all discovered circles for a group.
-      dataset: ?f"{group}-circles"
-      render-table:
-        direction:
-          display-mode: hidden
-        "regex('AF_(.+)')":
-          plot: 
-            ticks:
-              scale: "linear"
-              domain: [0.0, 1.0]
-              aux-domain-columns:
-                - "regex('AF_(.+)')"
-        "circle_length":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "circle_length"
-        "length":
-          plot: 
-            ticks:
-              scale: "linear"
-              aux-domain-columns:
-                - "length"
-        "regex('PROB_(.+)')":
-          plot:
-            heatmap:
-              scale: linear
-              domain: [0.0, 1.0]
-              range:
-                - white
-                - "#c1d7a8"
-        "GENES":
-          custom: ?gene_link
-        "breakpoint_seq":
-          custom: ?breakpoint_link
-        "EVENT":
-          custom: ?event_link
-        "graph":
-          custom: ?graph_link
-        "NUM_EXONS":
-          display-mode: hidden
+  ?for category in params.categories:
+    ?f"circles-{category}":
+      desc: ?f"""Overview table showing all discovered circles for category `{category}`.\n
 
+              | Column                | Description                                                                     |\n
+              | --------------------- | ------------------------------------------------------------------------------- |\n
+              | `event_id`            | Id of the event, format `{{graph_id}}-{{circle_id}}`                            |\n
+              | `graph_id`            | Id of the graph the circle belongs to                                           |\n
+              | `circle_id`           | Id of the circle in its parent graph                                            |\n
+              | `segment_count`       | Number of segments with coverage                                                |\n
+              | `regions`             | Genomic regions of only those segments with coverage                            |\n
+              | `num_exons`           | Number of exons in coverage segments                                            |\n
+              | `gene_names`          | Genes overlapping with coverage segments                                        |\n
+              | `regulatory_features` | Regulatory features overlapping with coverage segments                          |\n
+              | `repeats`             | Repeats known to repeatMasker overlapping with coverage segments                |\n
+              | `num_split_reads`     | Total number of split reads on all split edges of the circle                    |\n
+              | `prob_present`        | Probability of a circle being present as calculated by varlociraptor            |\n
+              | `prob_absent`         | Probability of a circle being absent as calculated by varlociraptor             |\n
+              | `prob_artifact`       | Probability of a circle being deemed an artefact as calculated by varlociraptor |\n
+              | `af_*`                | Allele frequency of the circle for the respective sample                        |\n
+              | `category`            | The circle's category, either of `coding`, `regulatory` or `intronic`           |\n
+              |  last column          | Link to a detailed view of all of the circle's segments                         |\n
+
+              """
+      dataset: ?f"data-{category}-circles"
+      render-table:
+        columns:
+          "graph_id":
+            custom-path: ?input.graph_link_formatter
+          "circle_id":
+            custom-path: ?input.circle_qc_plot_link_formatter
+          "regions":
+            custom: ?regions_links
+          "regex('prob_(.+)')":
+            plot:
+              heatmap:
+                scale: linear
+                domain: [0.0, 1.0]
+                range:
+                  - white
+                  - "#c1d7a8"
+          "gene_names":
+            custom-path: ?input.gene_card_link_formatter
+          "gene_ids":
+            display-mode: hidden
+          "regex('af_(.+)')":
+            plot: 
+              ticks:
+                scale: "linear"
+                domain: [0.0, 1.0]
+                aux-domain-columns:
+                  - "regex('af_(.+)')"
+
+  ?for group, circle, _ in params.detail_tables:
+    ?f"detail-{group}-{circle}-segments":
+      hidden: true
+      desc: ?f"""Detail table containing all covered segments and circle junctions for circle **{circle}** of group *{group}*.\n
+
+            | Column                | Description                                                                     |\n
+            | --------------------- | ------------------------------------------------------------------------------- |\n
+            | `graph_id`            | Id of the graph the circle belongs to                                           |\n
+            | `circle_id`           | Id of the circle in its parent graph                                            |\n
+            | `kind`                | Whether the edge is a `coverage` or a `split` edge                              |\n
+            | `target_from`         | The name of the sequence from which the edge starts                             |\n
+            | `from`                | The genomic locus in `target_from` from which the edge starts                   |\n
+            | `target_to`           | The name of the sequence at which the edge ends                                 |\n
+            | `to`                  | The genomic locus in `target_to` at which the edge ends                         |\n
+            | `length`              | Length of the edge in bp, if applicable                                         |\n
+            | `num_exons`           | Number of exons in a coverage segment                                           |\n
+            | `gene_names`          | Genes overlapping with a coverage segment                                       |\n
+            | `regulatory_features` | Regulatory features overlapping with a coverage segment                         |\n
+            | `repeats`             | Repeats known to repeatMasker overlapping with a coverage segment               |\n
+            | `coverage`            | Mean read depth for the edge in the circle                                      |\n
+            | `num_split_reads`     | Number of split reads for the edge in the circle                                |\n
+            | `breakpoint_sequence` | Link to a NCBI primer-blast with form's fields pre-filled                       |\n
+
+            """
+      dataset: ?f"data-{group}-{circle}-segments"
+      render-table:
+        columns:
+          "graph_id":
+            custom-path: ?input.graph_link_formatter
+          "circle_id":
+            custom-path: ?input.circle_qc_plot_link_formatter
+          "kind":
+            plot:
+              heatmap:
+                scale: ordinal
+                color-scheme: accent
+          "breakpoint_sequence":
+            custom: ?breakpoint_link
+          "gene_names":
+            custom-path: ?input.gene_card_link_formatter
+          "gene_ids":
+            display-mode: hidden
+
+  "summary-plot":
+    desc: |
+      Circle length distributions by category. 
+      Click on any of the bars to get to the respective category's overview table (or choose directly from the "views" dropdown menu).
+
+      Categories are defined as follows:
+
+      | Category     | Condition                                                       |
+      | ------------ | --------------------------------------------------------------- |
+      | `coding`     | at least 1 exon                                                 | 
+      | `regulatory` | not `coding` and at least 1 regulatory feature annotated        |
+      | `intronic`   | neither `coding` nor `regulatory` and at least 1 gene annotated |
+      | `other`  | none of the above                                               |
+      
+    dataset: ?f"overview-table"
+    render-plot:
+      spec-path: ?input.summary_spec

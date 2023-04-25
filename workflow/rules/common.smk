@@ -2,31 +2,25 @@ import pandas as pd
 import re
 from snakemake.utils import validate
 
-REFERENCE = config["calling"]["reference"]["name"]
-
 validate(config, schema="../schemas/config.schema.yaml")
-
-
-wildcard_constraints:
-    sample="[a-zA-Z_0-9-]+",
 
 
 def read_samples():
     samples = (
         pd.read_csv(
-            config["calling"]["samples"],
+            config["samples"],
             sep="\t",
-            dtype={"sample": str, "group": str},
+            dtype={"sample_name": str, "group": str},
             comment="#",
         )
-        .set_index("sample", drop=False)
+        .set_index("sample_name", drop=False)
         .sort_index()
     )
 
     def _group_or_sample(row):
         group = row.get("group", None)
         if pd.isnull(group):
-            return row["sample"]
+            return row["sample_name"]
         return group
 
     samples["group"] = [_group_or_sample(row) for _, row in samples.iterrows()]
@@ -35,18 +29,25 @@ def read_samples():
 
 
 samples = read_samples()
+SAMPLES = list(sorted(set(samples["sample_name"])))
 GROUPS = list(sorted(set(samples["group"])))
+CATEGORIES = ["coding", "regulatory", "intronic", "other"]
+
+
+wildcard_constraints:
+    sample="|".join(SAMPLES),
+    group="|".join(GROUPS),
 
 
 def read_units():
     units = (
         pd.read_csv(
-            config["calling"]["units"],
+            config["units"],
             sep="\t",
-            dtype={"sample": str, "unit": str},
+            dtype={"sample_name": str, "unit_name": str},
             comment="#",
         )
-        .set_index(["sample", "unit"], drop=False)
+        .set_index(["sample_name", "unit_name"], drop=False)
         .sort_index()
     )
     validate(units, schema="../schemas/units.schema.yaml")
@@ -58,12 +59,17 @@ units = read_units()
 
 def get_all_input(wildcards):
     targets = []
+    targets += expand("results/datavzrd-report/{group}.fdr-controlled", group=GROUPS)
     targets += expand(
-        "results/calling/tables/{group}.sorted.annotated.csv", group=GROUPS
+        "results/tmp/{group}.{category}.qc_plots.marker",
+        group=GROUPS,
+        category=CATEGORIES,
     )
-    targets += ["results/datavzrd-report/all.fdr-controlled"]
-    targets += expand("results/tmp/{group}.qc_plots.marker", group=GROUPS)
-    targets += expand("results/tmp/{group}.graph_plots.marker", group=GROUPS)
+    targets += expand(
+        "results/tmp/{group}.{category}.graph_plots.marker",
+        group=GROUPS,
+        category=CATEGORIES,
+    )
     return targets
 
 
@@ -82,17 +88,17 @@ def get_group_candidates(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "illumina_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'illumina'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'illumina'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "nanopore_with_illumina_support":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample"]
+            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     else:
@@ -122,17 +128,17 @@ def get_observations(wildcards):
 
     observations = []
 
-    has_nanopore = len(s.query("platform == 'nanopore'")["sample"]) > 0
-    has_illumina = len(s.query("platform == 'illumina'")["sample"]) > 0
+    has_nanopore = len(s.query("platform == 'nanopore'")["sample_name"]) > 0
+    has_illumina = len(s.query("platform == 'illumina'")["sample_name"]) > 0
 
     if has_nanopore:
-        for sample_nanopore in list(s.query("platform == 'nanopore'")["sample"]):
+        for sample_nanopore in list(s.query("platform == 'nanopore'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
             )
 
     if has_illumina:
-        for sample_illumina in list(s.query("platform == 'illumina'")["sample"]):
+        for sample_illumina in list(s.query("platform == 'illumina'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
             )
@@ -211,9 +217,7 @@ def get_fastqs(wildcards):
 
 # black wasn't happy about the inline version of this in the params section
 def varlociraptor_filtering_mode(wildcards):
-    return (
-        "--local" if config["calling"]["filter"]["fdr-control"]["local"] is True else ""
-    )
+    return config["filter"]["fdr-control"].get("mode", "local-smart")
 
 
 class Region:
@@ -263,15 +267,27 @@ def parse_bnd_alt(s: str):
 CYRCULAR_INFO_FIELDS = ["CircleLength", "CircleSegmentCount", "SplitReads", "Support"]
 
 
-def copy_annotation_table_expr():
-    return "CHROM,POS,ID,REF,ALT," + ",".join(
-        map(lambda s: f"INFO['{s}']", CYRCULAR_INFO_FIELDS)
-    )
+def get_detail_tables_group_circle_path_for_report(wildcards, input):
+    from pathlib import Path
 
-
-def copy_annotation_vembrane_header_expr():
-    return "CHROM,POS,ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS)
-
-
-def copy_annotation_bcftools_annotate_columns():
-    return "CHROM,POS,~ID,REF,ALT," + ",".join(CYRCULAR_INFO_FIELDS)
+    group = wildcards.group
+    res = []
+    folder = input.detail_tables
+    group_tsv = pd.read_csv(input.categorized_overview_table, sep="\t")
+    keep_event_ids = set(group_tsv["event_id"])
+    detail_table_files = [f for f in os.listdir(folder) if f.endswith(".tsv")]
+    event_ids = [
+        f"{m.group(1)}-{m.group(2)}"
+        for m in [
+            re.match("graph_([^_]+)_circle_([^_]+)_segments.tsv", path)
+            for path in detail_table_files
+        ]
+    ]
+    for event_id, detail_file in zip(event_ids, detail_table_files):
+        if event_id not in keep_event_ids:
+            continue
+        f = pd.read_csv(f"{folder}/{detail_file}", sep="\t")
+        if f.empty:
+            continue
+        res.append((group, event_id, f"{folder}/{detail_file}"))
+    return res

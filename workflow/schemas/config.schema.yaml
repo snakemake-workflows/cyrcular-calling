@@ -5,10 +5,6 @@ description: snakemake configuration file
 type: object
 
 definitions:
-  filterentry:
-    type: object
-    additionalProperties:
-      type: string
   evententry:
     type: object
     properties:
@@ -25,32 +21,26 @@ definitions:
 
 
 properties:
-  calling:
+  samples:
+    type: string
+  units:
+    type: string
+  reference:
     type: object
     properties:
-      samples:
+      species:
         type: string
-      reference:
-        type: object
-        properties:
-          name:
-            type: string
-          path:
-            type: string
-          n_chromosomes:
-            type: integer
-          species:
-            type: string
-          release:
-            type: integer
-          build:
-            type: string
-        required:
-          - name
-          - species
-          - release
-          - build
-          - n_chromosomes
+      release:
+        type: integer
+      build:
+        type: string
+    required:
+      - species
+      - release
+      - build
+  cyrcular:
+    type: object
+    properties:
       min_read_depth:
         type: number
         default: 2
@@ -67,26 +57,30 @@ properties:
         type: number
         default: 10000
         minimum: 1
-      filter:
-        fdr-control:
-            type: object
-            properties:
-              threshold:
-                type: number
-                minimum: 0.0
-                maximum: 1.0
-              local:
-                type: boolean
-              events:
-                $ref: "#/definitions/evententry"
-                description: "a map of <eventname: event> pairs"
-            required:
-              - threshold
-              - events
     required:
-      - samples
-      - reference
-      - filter
-
+      - min_read_depth
+      - min_split_reads
+      - max_paths_per_component
+      - max_deletion_length
+  filter:
+    fdr-control:
+      type: object
+      properties:
+        threshold:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+        local:
+          type: boolean
+        events:
+          $ref: "#/definitions/evententry"
+          description: "a map of <eventname: event> pairs"
+      required:
+        - threshold
+        - events
 required:
-  - calling
+  - samples
+  - units
+  - reference
+  - cyrcular
+  - filter

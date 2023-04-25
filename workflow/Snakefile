@@ -12,12 +12,11 @@ scattergather:
 
 
 include: "rules/common.smk"
-include: "rules/utils.smk"
+include: "rules/ref.smk"
 include: "rules/map.smk"
 include: "rules/call.smk"
 include: "rules/annotate.smk"
 include: "rules/filter.smk"
-include: "rules/table.smk"
 include: "rules/plot.smk"
 include: "rules/datavzrd.smk"
 

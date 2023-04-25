@@ -1,0 +1,14 @@
+.test/benchmarks/**
+.test/logs/**
+.test/resources/*.fai
+.test/resources/*.gz
+.test/resources/*.mmi
+.test/results/**
+.test/.snakemake/**
+benchmarks/**
+logs/**
+resources/**
+!resources/datavzrd/**
+!resources/summary_plot.json
+results/**
+.snakemake/**

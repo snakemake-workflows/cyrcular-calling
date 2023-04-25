@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use this workflow, please cite the article from preferred-citation and the workflow itself."
+authors:
+- family-names: "Hartmann"
+  given-names: "Till"
+  orcid: "https://orcid.org/0000-0002-6993-347X"
+- family-names: "Lähnemann"
+  given-names: "David"
+  orcid: "https://orcid.org/0000-0002-9138-4112"
+title: "snakemake-workflows/cyrcular-calling"
+version: 1.2.0
+doi: Zenodo DOI TBD
+date-released: 2023-04-06
+url: "https://github.com/snakemake-workflows/cyrcular-calling"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Tüns"
+    given-names: "Alicia Isabell"
+    orcid: "https://orcid.org/0000-0003-0025-1304"
+  - family-names: "Hartmann"
+    given-names: "Till"
+    orcid: "https://orcid.org/0000-0002-6993-347X"
+  - family-names: "Magin"
+    given-names: "Simon"
+  - family-names: "Chamorro González"
+    given-names: "Rocío"
+    orcid: "https://orcid.org/0000-0002-5653-7259"
+  - family-names: "Henssen"
+    given-names: "Anton George"
+    orcid: "https://orcid.org/0000-0003-1534-778X"
+  - family-names: "Rahmann"
+    given-names: "Sven"
+    orcid: "https://orcid.org/0000-0002-8536-6065"
+  - family-names: "Schramm"
+    given-names: "Alexander"
+    orcid: "https://orcid.org/0000-0001-7670-7529"
+  - family-names: "Köster"
+    given-names: "Johannes"
+    orcid: "https://orcid.org/0000-0001-9818-9320"
+  doi: "10.3389/fgene.2022.867018"
+  journal: "Frontiers in Genetics"
+  month: 05
+  year: 2022
+  title: "Detection and Validation of Circular DNA Fragments Using Nanopore Sequencing"

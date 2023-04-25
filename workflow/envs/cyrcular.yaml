@@ -2,7 +2,7 @@ channels:
   - conda-forge
   - bioconda
 dependencies:
-  - rust =1.58.1
+  - rust =1.67.1
   - git =2.35.0
   - compilers =1.3.0
   - pkg-config =0.29.2
@@ -11,7 +11,7 @@ dependencies:
   - gsl =2.7
   - libcblas =3.9.0
   - openssl =3.0.0
-  - zlib =1.2.11
+  - zlib >=1.2.12,<1.3
   - bzip2 =1.0.8
   - xz =5.2.5
   - clangdev =13.0.0

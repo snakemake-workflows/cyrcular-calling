@@ -1,3 +1,106 @@
+## annotate genes, exons and breakpoint sequences; produce one overview table containing circles, and one table with details of each segment for each circle
+
+
+rule cyrcular_generate_tables:
+    input:
+        reference=rules.get_genome.output.genome,
+        graph="results/calling/graphs/{group}.annotated.graph",
+        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
+    output:
+        overview="results/calling/tables/{group}/{group}_overview.tsv",
+        details=directory("results/calling/tables/{group}/{group}_details/"),
+    threads: 1
+    log:
+        "logs/cyrcular_generate_tables/{group}.log",
+    benchmark:
+        "benchmarks/cyrcular_generate_tables/{group}.txt"
+    conda:
+        "../envs/cyrcular.yaml"
+    shell:
+        """cyrcular graph table {input.graph} {input.bcf} --reference {input.reference} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
+
+
+rule cyrcular_annotate_graph:
+    input:
+        reference=rules.get_genome.output.genome,
+        graph="results/calling/graphs/{group}.graph",
+        gene_annotation="resources/gene_annotation.gff3.gz",
+        regulatory_annotation="resources/regulatory_annotation.gff3.gz",
+        repeat_annotation=lambda wc: "resources/repeat_masker.fa.out.gz"
+        if config["reference"].get("repeat_masker_download_link", "")
+        else "",
+    output:
+        annotated="results/calling/graphs/{group}.annotated.graph",
+    threads: 1
+    log:
+        "logs/cyrcular_annotate_graph/{group}.log",
+    benchmark:
+        "benchmarks/cyrcular_annotate_graph/{group}.txt"
+    conda:
+        "../envs/cyrcular.yaml"
+    params:
+        repeat_annotation=lambda wc, input: f"  --repeat-annotation {input.repeat_annotation} "
+        if config["reference"].get("repeat_masker_download_link", "")
+        else "",
+    shell:
+        "cyrcular graph annotate "
+        "  --reference {input.reference} "
+        "  --gene-annotation {input.gene_annotation} "
+        "  --regulatory-annotation {input.regulatory_annotation} "
+        "  --output {output.annotated} "
+        "  {input.graph} "
+        "2> {log} "
+
+
+rule reheader_filtered_bcf:
+    input:
+        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
+        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
+    output:
+        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
+    log:
+        "logs/reheader_filtered_bcf/{group}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        ## bcftools re-header seems to re-order entries
+        # bcftools reheader --header {input.sorted_header} --output {output.bcf} {input.bcf}
+        ## so we have to re-header ourselves
+        ## TODO: reinvestigate to find a cleaner solution
+        """
+        cat {input.sorted_header} <(bcftools view -H {input.bcf}) | bcftools view -Ob > {output.bcf} 2> {log}
+        """
+
+
+rule sort_bcf_header:
+    input:
+        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
+        header="results/calling/calls/filtered_fdr/{group}.header.txt",
+    output:
+        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
+    log:
+        "logs/sort_bcf_header/{group}.log",
+    conda:
+        "../envs/python.yaml"
+    script:
+        "../scripts/sort_bcf_header.py"
+
+
+rule get_bcf_header:
+    input:
+        bcf="{file}.bcf",
+    output:
+        header="{file}.header.txt",
+    log:
+        "logs/get_bcf_header/{file}.log",
+    conda:
+        "../envs/bcftools.yaml"
+    shell:
+        """
+        bcftools view -h {input.bcf} > {output.header} 2> {log}
+        """
+
+
 rule extract_vcf_header_lines_for_bcftools_annotate:
     input:
         vcf="results/calling/candidates/{sample}.sorted.bcf",
@@ -13,89 +116,3 @@ rule extract_vcf_header_lines_for_bcftools_annotate:
         """
         bcftools view -h {input.vcf} | rg {params.fields:q} > {output.header} 2> {log}
         """
-
-
-rule copy_annotation_from_cyrcular:
-    input:
-        variants="results/calling/calls/pre_annotated/{sample}.bcf",
-        variants_index="results/calling/calls/pre_annotated/{sample}.bcf.csi",
-        candidates_with_annotation="results/calling/candidates/{sample}.sorted.bcf",
-        candidates_with_annotation_index="results/calling/candidates/{sample}.sorted.bcf.csi",
-        header_lines="results/calling/annotation/{sample}.header_lines.txt",
-    output:
-        variants="results/calling/calls/annotated/{sample}.bcf",
-        annotation=temp("results/calling/candidates/{sample}.sorted.bcf.tab"),
-        annotation_bgzip=temp("results/calling/candidates/{sample}.sorted.bcf.tab.bgz"),
-        annotation_bgzip_tabix=temp(
-            "results/calling/candidates/{sample}.sorted.bcf.tab.bgz.tbi"
-        ),
-    log:
-        "logs/re-annotate/{sample}.log",
-    benchmark:
-        "benchmarks/re-annotate/{sample}.txt"
-    conda:
-        "../envs/vcf_annotate.yaml"
-    params:
-        header=copy_annotation_vembrane_header_expr(),
-        table_expr=copy_annotation_table_expr(),
-        columns=copy_annotation_bcftools_annotate_columns(),
-    shell:
-        """
-        vembrane table --header {params.header:q} {params.table_expr:q} {input.candidates_with_annotation} > {output.annotation} 2> {log}
-        bgzip -c {output.annotation} > {output.annotation_bgzip} 2>> {log}
-        tabix -p vcf --zero-based -S 1 -f {output.annotation_bgzip} 2>> {log}
-        bcftools annotate --header-lines {input.header_lines} --annotations {output.annotation_bgzip} --columns {params.columns} --output-type b --output {output.variants} {input.variants}  2>> {log}
-        """
-
-
-rule annotate_genes:
-    input:
-        annotation="resources/gencode.v38.annotation.sorted.gff3.gz",
-        variants="results/calling/calls/merged/{sample}.bcf",
-    output:
-        variants="results/calling/calls/pre_annotated/{sample}.bcf",
-    threads: 1
-    log:
-        "logs/annotate_genes/{sample}.log",
-    benchmark:
-        "benchmarks/annotate_genes/{sample}.txt"
-    conda:
-        "../envs/gff.yaml"
-    script:
-        "../scripts/gff_annotate.py"
-
-
-rule sort_annotation:
-    input:
-        "resources/gencode.v38.annotation.gff3.gz",
-    output:
-        gff="resources/gencode.v38.annotation.sorted.gff3.gz",
-        tbi="resources/gencode.v38.annotation.sorted.gff3.gz.tbi",
-        csi="resources/gencode.v38.annotation.sorted.gff3.gz.csi",
-    conda:
-        "../envs/gff.yaml"
-    log:
-        "logs/sort_annotation/gencode.v38.annotation.gff3.log",
-    benchmark:
-        "benchmarks/sort_annotation/gencode.v38.annotation.gff3.txt"
-    threads: 48
-    shell:
-        """
-        gff3sort.pl <(pigz -dc {input}) | bgzip -@ {threads} -c > {output.gff} 2> {log}
-        tabix {output.gff} 2>> {log}
-        tabix --csi {output.gff} 2>> {log}
-        """
-
-
-rule download_annotation:
-    output:
-        "resources/gencode.v38.annotation.gff3.gz",
-    log:
-        "logs/download_annotation/gencode.v38.annotation.gff3.log",
-    benchmark:
-        "benchmarks/download_annotation/gencode.v38.annotation.gff3.txt"
-    cache: True
-    conda:
-        "../envs/wget.yaml"
-    shell:
-        """wget https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_38/gencode.v38.annotation.gff3.gz --no-check-certificate -O {output} 2> {log}"""

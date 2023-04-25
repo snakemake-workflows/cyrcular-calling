@@ -1,23 +1,37 @@
 
-rule filter_calls:
+rule filter_overview_table:
     input:
-        "results/calling/calls/annotated/{group}.bcf",
+        table="results/calling/tables/{group}/{group}_overview.tsv",
     output:
-        calls="results/calling/calls/filtered/{group}.bcf",
-        by_exons=temp("results/calling/calls/filtered/{group}.at_least_one_exon.bcf"),
+        coding="results/calling/tables/{group}/{group}_overview.coding.tsv",
+        regulatory="results/calling/tables/{group}/{group}_overview.regulatory.tsv",
+        intronic="results/calling/tables/{group}/{group}_overview.intronic.tsv",
+        other="results/calling/tables/{group}/{group}_overview.other.tsv",
+        categorized="results/calling/tables/{group}/{group}_categorized_overview.tsv",
     log:
-        "logs/filter-calls/{group}.log",
-    benchmark:
-        "benchmarks/filter-calls/{group}.txt"
+        "logs/filter_overview_table/{group}.log",
     conda:
-        "../envs/vembrane.yaml"
+        "../envs/pandas.yaml"
+    script:
+        "../scripts/filter_overview_table.py"
+
+
+rule filter_varlociraptor:
+    input:
+        calls="results/calling/calls/merged/{group}.bcf",
+    output:
+        fdr_calls="results/calling/calls/filtered_fdr/{group}.bcf",
+    log:
+        "logs/filter-varlociraptor/{group}.log",
+    benchmark:
+        "benchmarks/filter-varlociraptor/{group}.txt"
+    conda:
+        "../envs/varlociraptor.yaml"
     threads: 1
     params:
-        fdr=config["calling"]["filter"]["fdr-control"].get("threshold", 0.05),
+        fdr=config["filter"]["fdr-control"].get("threshold", 0.05),
         mode=varlociraptor_filtering_mode,
-        filter_expression="True",  # 'INFO["NUM_EXONS"] != 0',
     shell:
         """
-        vembrane filter '{params.filter_expression}' {input} -O bcf > {output.by_exons} 2> {log}
-        varlociraptor filter-calls control-fdr {params.mode} --events PRESENT --var BND --fdr {params.fdr} {output.by_exons} | varlociraptor decode-phred | bcftools sort -m 4G -Ob > {output.calls} 2>> {log}
+        varlociraptor filter-calls control-fdr --mode {params.mode} --events PRESENT --var BND --fdr {params.fdr} {input.calls} | varlociraptor decode-phred | bcftools sort -m 4G -Ob > {output.fdr_calls} 2> {log}
         """

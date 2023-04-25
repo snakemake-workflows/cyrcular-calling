@@ -10,7 +10,7 @@ rule bcf_index:
     benchmark:
         "benchmarks/bcftools/index/{prefix}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/index"
+        "v1.25.0/bio/bcftools/index"
 
 
 rule bcftools_concat:
@@ -32,7 +32,7 @@ rule bcftools_concat:
         uncompressed_bcf=False,
         extra="-a",  # optional parameters for bcftools concat (except -o)
     wrapper:
-        "v1.0.0/bio/bcftools/concat"
+        "v1.25.0/bio/bcftools/concat"
 
 
 rule bcftools_sort:
@@ -40,13 +40,12 @@ rule bcftools_sort:
         "results/calling/calls/initial/{group}.{scatteritem}.bcf",
     output:
         "results/calling/calls/initial_sorted/{group}.{scatteritem}.bcf",
-    threads: 2
     log:
         "logs/sort_calls/{group}.{scatteritem}.log",
     benchmark:
         "benchmarks/sort_calls/{group}.{scatteritem}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/sort"
+        "v1.25.0/bio/bcftools/sort"
 
 
 rule varlociraptor_call:
@@ -72,8 +71,8 @@ rule varlociraptor_call:
 
 rule varlociraptor_alignment_properties:
     input:
-        ref=config["calling"]["reference"]["path"],
-        ref_idx=config["calling"]["reference"]["path"] + ".fai",
+        ref=rules.get_genome.output.genome,
+        ref_idx=rules.genome_faidx.output.index,
         bam="results/calling/mapping/{sample}.bam",
     output:
         "results/calling/alignment-properties/{sample}.json",
@@ -87,8 +86,8 @@ rule varlociraptor_alignment_properties:
 
 rule varlociraptor_preprocess:
     input:
-        ref=config["calling"]["reference"]["path"],
-        ref_idx=config["calling"]["reference"]["path"] + ".fai",
+        ref=rules.get_genome.output.genome,
+        ref_idx=rules.genome_faidx.output.index,
         candidates=get_group_candidates,
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
@@ -135,20 +134,20 @@ rule sort_bnd_bcfs:
         "results/calling/candidates/{sample}.bcf",
     output:
         "results/calling/candidates/{sample}.sorted.bcf",
-    threads: 2
     log:
         "logs/sort_bnds/{sample}.log",
     benchmark:
         "benchmarks/sort_bnds/{sample}.txt"
     wrapper:
-        "v1.0.0/bio/bcftools/sort"
+        "v1.25.0/bio/bcftools/sort"
 
 
 rule circle_bnds:
     input:
         bam="results/calling/mapping/{sample}.bam",
         bai="results/calling/mapping/{sample}.bam.bai",
-        ref=config["calling"]["reference"]["path"],
+        ref=rules.get_genome.output.genome,
+        ref_index=rules.genome_faidx.output.index,
     output:
         bnds="results/calling/candidates/{sample}.bcf",
         graph="results/calling/graphs/{sample}.graph",
@@ -159,10 +158,10 @@ rule circle_bnds:
         "benchmarks/cyrcular/{sample}.txt"
     threads: 4
     params:
-        min_read_depth=config["calling"]["min_read_depth"],  # 2
-        min_split_reads=config["calling"]["min_split_reads"],  # 5
-        max_paths_per_component=config["calling"]["max_paths_per_component"],  # 15
-        max_deletion_length=config["calling"]["max_deletion_length"],  # 10000,
+        min_read_depth=config["cyrcular"]["min_read_depth"],  # 2
+        min_split_reads=config["cyrcular"]["min_split_reads"],  # 5
+        max_paths_per_component=config["cyrcular"]["max_paths_per_component"],  # 15
+        max_deletion_length=config["cyrcular"]["max_deletion_length"],  # 10000,
     conda:
         "../envs/cyrcular.yaml"
     shell:
