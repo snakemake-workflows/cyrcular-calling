@@ -175,11 +175,11 @@ def scenario_name(wildcards):
 def get_scenario(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
-        return "resources/scenarios/nanopore_circle_scenario.yaml"
+        return workflow.source_path("../resources/scenarios/nanopore_circle_scenario.yaml")
     elif scenario == "illumina_only":
-        return "resources/scenarios/illumina_circle_scenario.yaml"
+        return workflow.source_path("../resources/scenarios/illumina_circle_scenario.yaml")
     elif scenario == "nanopore_with_illumina_support":
-        return "resources/scenarios/nanopore_illumina_joint_circle_scenario.yaml"
+        return workflow.source_path("../resources/scenarios/nanopore_illumina_joint_circle_scenario.yaml")
     else:
         raise ValueError(f"Unknown scenario: {scenario}")
 
