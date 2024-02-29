@@ -34,6 +34,12 @@ properties:
         type: integer
       build:
         type: string
+      flavor:
+        type: string
+      branch:
+        type: string
+      repeat_masker_download_link:
+        type: string
     required:
       - species
       - release
@@ -70,8 +76,11 @@ properties:
           type: number
           minimum: 0.0
           maximum: 1.0
-        local:
-          type: boolean
+        mode:
+          type: array
+          items:
+            type: string
+            enum: ["local-smart", "local-strict", "global-smart", "global-strict"]
         events:
           $ref: "#/definitions/evententry"
           description: "a map of <eventname: event> pairs"
