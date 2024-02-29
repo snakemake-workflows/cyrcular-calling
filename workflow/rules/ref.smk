@@ -45,8 +45,6 @@ rule minimap2_index:
         ),
     log:
         "logs/minimap2_index/genome.log",
-    benchmark:
-        "benchmarks/minimap2_index/genome.txt"
     params:
         extra="",  # optional additional args
     cache: True
@@ -65,8 +63,6 @@ rule download_regulatory_annotation:
         "logs/download_regulatory_annotation.log",
     params:
         release=config["reference"].get("release", "107"),
-    benchmark:
-        "benchmarks/download_regulatory_annotation.txt"
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     conda:
         "../envs/wget.yaml"
@@ -81,8 +77,6 @@ rule download_repeatmasker_annotation:
         "logs/download_repeatmasker_annotation.log",
     params:
         download_link=config["reference"].get("repeat_masker_download_link", ""),
-    benchmark:
-        "benchmarks/download_repeatmasker_annotation.txt"
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     conda:
         "../envs/wget.yaml"
