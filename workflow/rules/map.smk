@@ -11,7 +11,7 @@ rule minimap2_bam:
     params:
         extra=get_minimap2_mapping_params,  # optional
         sorting="coordinate",  # optional: Enable sorting. Possible values: 'none', 'queryname' or 'coordinate'
-        sort_extra=lambda wc, threads: f"-@ {min(threads, 4)}",  # optional: extra arguments for samtools/picard
+        sort_extra=lambda wc, threads: f"-@ {min(threads , 4)}",  # optional: extra arguments for samtools/picard
     threads: workflow.cores // 2
     wrapper:
         "v1.25.0/bio/minimap2/aligner"
@@ -27,9 +27,11 @@ rule merge_fastqs:
     wildcard_constraints:
         read="single|R1|R2",
     params:
-        cmd=lambda wc: "pigz -dc"
-        if (any(map(lambda f: f.endswith(".gz"), get_fastqs(wc))))
-        else "cat",
+        cmd=lambda wc: (
+            "pigz -dc"
+            if (any(map(lambda f: f.endswith(".gz"), get_fastqs(wc))))
+            else "cat"
+        ),
     conda:
         "../envs/pigz.yaml"
     shell:
