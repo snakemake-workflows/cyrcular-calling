@@ -8,6 +8,9 @@ reference:
   build: GRCh38
   # Ensembl release
   release: 107
+  # flavor: ""  # optional, e.g. chr_patch_hapl_scaff, see Ensembl FTP.
+  # branch: ""  # optional
+
   # for available downloads, please browse either of these views:
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasets.html
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasetsAlt.html
