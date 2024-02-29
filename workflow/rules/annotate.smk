@@ -26,9 +26,11 @@ rule cyrcular_annotate_graph:
         graph="results/calling/graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",
-        repeat_annotation=lambda wc: "resources/repeat_masker.fa.out.gz"
-        if config["reference"].get("repeat_masker_download_link", "")
-        else "",
+        repeat_annotation=lambda wc: (
+            "resources/repeat_masker.fa.out.gz"
+            if config["reference"].get("repeat_masker_download_link", "")
+            else ""
+        ),
     output:
         annotated="results/calling/graphs/{group}.annotated.graph",
     threads: 1
@@ -39,9 +41,11 @@ rule cyrcular_annotate_graph:
     conda:
         "../envs/cyrcular.yaml"
     params:
-        repeat_annotation=lambda wc, input: f"  --repeat-annotation {input.repeat_annotation} "
-        if config["reference"].get("repeat_masker_download_link", "")
-        else "",
+        repeat_annotation=lambda wc, input: (
+            f"  --repeat-annotation {input.repeat_annotation} "
+            if config["reference"].get("repeat_masker_download_link", "")
+            else ""
+        ),
     shell:
         "cyrcular graph annotate "
         "  --reference {input.reference} "
