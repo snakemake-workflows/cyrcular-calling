@@ -74,7 +74,7 @@ def get_all_input(wildcards):
 
 
 def pairhmm_mode(wildcards):
-    if samples.loc[wildcards.sample]["platform"] == "nanopore":
+    if samples.loc[wildcards.sample]["platform"].lower() == "nanopore":
         mode = "homopolymer"
     else:
         mode = "exact"
@@ -88,17 +88,17 @@ def get_group_candidates(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "illumina_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'illumina'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'illumina'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "nanopore_with_illumina_support":
         sample = list(
-            samples.query(f"group == '{group}' & platform == 'nanopore'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")["sample_name"]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     else:
@@ -128,17 +128,17 @@ def get_observations(wildcards):
 
     observations = []
 
-    has_nanopore = len(s.query("platform == 'nanopore'")["sample_name"]) > 0
-    has_illumina = len(s.query("platform == 'illumina'")["sample_name"]) > 0
+    has_nanopore = len(s.query("platform.lower() == 'nanopore'")["sample_name"]) > 0
+    has_illumina = len(s.query("platform.lower() == 'illumina'")["sample_name"]) > 0
 
     if has_nanopore:
-        for sample_nanopore in list(s.query("platform == 'nanopore'")["sample_name"]):
+        for sample_nanopore in list(s.query("platform.lower() == 'nanopore'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
             )
 
     if has_illumina:
-        for sample_illumina in list(s.query("platform == 'illumina'")["sample_name"]):
+        for sample_illumina in list(s.query("platform.lower() == 'illumina'")["sample_name"]):
             observations.append(
                 f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
             )
@@ -150,17 +150,17 @@ def scenario_name(wildcards):
     s = samples.query(f"group == '{wildcards.group}'")
     num_samples_in_group = len(s)
     if num_samples_in_group == 1:
-        if "illumina" in set(s["platform"]):
+        if "illumina" in set(s["platform"].lower()):
             return "illumina_only"
-        elif "nanopore" in set(s["platform"]):
+        elif "nanopore" in set(s["platform"].lower()):
             return "nanopore_only"
         else:
-            platforms = ", ".join(set(s["platform"]))
+            platforms = ", ".join(set(s["platform"].lower()))
             raise ValueError(
                 f"Single sample scenario not defined for platforms {platforms}"
             )
     elif num_samples_in_group == 2:
-        if len(set(s["platform"]) - {"illumina", "nanopore"}) == 0:
+        if len(set(s["platform"].lower()) - {"illumina", "nanopore"}) == 0:
             return "nanopore_with_illumina_support"
         else:
             raise ValueError(
@@ -191,9 +191,9 @@ def get_scenario(wildcards):
 
 
 def get_minimap2_mapping_params(wildcards):
-    if samples.loc[wildcards.sample]["platform"] == "nanopore":
+    if samples.loc[wildcards.sample]["platform"].lower() == "nanopore":
         return "-x map-ont"
-    elif samples.loc[wildcards.sample]["platform"] == "illumina":
+    elif samples.loc[wildcards.sample]["platform"].lower() == "illumina":
         return "-x sr"
     else:
         return ""
