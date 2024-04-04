@@ -134,12 +134,12 @@ def get_observations(wildcards):
 
     observations = []
 
-    has_nanopore = len(s.query("platform.lower() == 'nanopore'")["sample_name"]) > 0
-    has_illumina = len(s.query("platform.lower() == 'illumina'")["sample_name"]) > 0
+    has_nanopore = len(s.query("platform.str.lower() == 'nanopore'")["sample_name"]) > 0
+    has_illumina = len(s.query("platform.str.lower() == 'illumina'")["sample_name"]) > 0
 
     if has_nanopore:
         for sample_nanopore in list(
-            s.query("platform.lower() == 'nanopore'")["sample_name"]
+            s.query("platform.str.lower() == 'nanopore'")["sample_name"]
         ):
             observations.append(
                 f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
@@ -147,7 +147,7 @@ def get_observations(wildcards):
 
     if has_illumina:
         for sample_illumina in list(
-            s.query("platform.lower() == 'illumina'")["sample_name"]
+            s.query("platform.str.lower() == 'illumina'")["sample_name"]
         ):
             observations.append(
                 f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
