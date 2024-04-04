@@ -88,17 +88,23 @@ def get_group_candidates(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")[
+                "sample_name"
+            ]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "illumina_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'illumina'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'illumina'")[
+                "sample_name"
+            ]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "nanopore_with_illumina_support":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")["sample_name"]
+            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")[
+                "sample_name"
+            ]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     else:
@@ -132,13 +138,17 @@ def get_observations(wildcards):
     has_illumina = len(s.query("platform.lower() == 'illumina'")["sample_name"]) > 0
 
     if has_nanopore:
-        for sample_nanopore in list(s.query("platform.lower() == 'nanopore'")["sample_name"]):
+        for sample_nanopore in list(
+            s.query("platform.lower() == 'nanopore'")["sample_name"]
+        ):
             observations.append(
                 f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
             )
 
     if has_illumina:
-        for sample_illumina in list(s.query("platform.lower() == 'illumina'")["sample_name"]):
+        for sample_illumina in list(
+            s.query("platform.lower() == 'illumina'")["sample_name"]
+        ):
             observations.append(
                 f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
             )
