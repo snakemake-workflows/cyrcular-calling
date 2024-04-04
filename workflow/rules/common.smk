@@ -160,17 +160,17 @@ def scenario_name(wildcards):
     s = samples.query(f"group == '{wildcards.group}'")
     num_samples_in_group = len(s)
     if num_samples_in_group == 1:
-        if "illumina" in set(s["platform"].lower()):
+        if "illumina" in set(s["platform"].str.lower()):
             return "illumina_only"
-        elif "nanopore" in set(s["platform"].lower()):
+        elif "nanopore" in set(s["platform"].str.lower()):
             return "nanopore_only"
         else:
-            platforms = ", ".join(set(s["platform"].lower()))
+            platforms = ", ".join(set(s["platform"].str.lower()))
             raise ValueError(
                 f"Single sample scenario not defined for platforms {platforms}"
             )
     elif num_samples_in_group == 2:
-        if len(set(s["platform"].lower()) - {"illumina", "nanopore"}) == 0:
+        if len(set(s["platform"].str.lower()) - {"illumina", "nanopore"}) == 0:
             return "nanopore_with_illumina_support"
         else:
             raise ValueError(
