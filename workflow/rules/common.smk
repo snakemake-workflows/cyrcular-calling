@@ -74,7 +74,7 @@ def get_all_input(wildcards):
 
 
 def pairhmm_mode(wildcards):
-    if samples.loc[wildcards.sample]["platform"].lower() == "nanopore":
+    if samples.loc[wildcards.sample]["platform"].str.lower() == "nanopore":
         mode = "homopolymer"
     else:
         mode = "exact"
@@ -88,21 +88,21 @@ def get_group_candidates(wildcards):
     scenario = scenario_name(wildcards)
     if scenario == "nanopore_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")[
+            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
                 "sample_name"
             ]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "illumina_only":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'illumina'")[
+            samples.query(f"group == '{group}' & platform.str.lower() == 'illumina'")[
                 "sample_name"
             ]
         )[0]
         return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
     elif scenario == "nanopore_with_illumina_support":
         sample = list(
-            samples.query(f"group == '{group}' & platform.lower() == 'nanopore'")[
+            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
                 "sample_name"
             ]
         )[0]
