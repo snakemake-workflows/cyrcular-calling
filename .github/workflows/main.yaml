@@ -55,4 +55,4 @@ jobs:
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--configfile .test/config/config.yaml --report report.zip"
+        args: "--configfile .test/config/config.yaml --cores 2 --report report.zip"
