@@ -74,7 +74,7 @@ def get_all_input(wildcards):
 
 
 def pairhmm_mode(wildcards):
-    if samples.loc[wildcards.sample]["platform"].str.lower() == "nanopore":
+    if samples.loc[wildcards.sample]["platform"].lower() == "nanopore":
         mode = "homopolymer"
     else:
         mode = "exact"
