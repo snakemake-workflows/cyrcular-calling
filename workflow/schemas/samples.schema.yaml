@@ -14,7 +14,9 @@ properties:
     type: string
     enum:
       - "illumina"
+      - "ILLUMINA"
       - "nanopore"
+      - "NANOPORE"
     description: sequencing platform
 
 
