@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/snakemake-workflows/cyrcular-calling/compare/v2.1.0...v2.1.1) (2024-08-19)
+
+
+### Bug Fixes
+
+* use bioconda package for cyrcular 0.3.0 ([b2ba7cb](https://github.com/snakemake-workflows/cyrcular-calling/commit/b2ba7cb1934683cc18861e53c47f3108812bf62e))
+
 ## [2.1.0](https://github.com/snakemake-workflows/cyrcular-calling/compare/v2.0.0...v2.1.0) (2024-04-08)
 
 
