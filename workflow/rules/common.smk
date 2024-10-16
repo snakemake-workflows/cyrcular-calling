@@ -156,50 +156,6 @@ def get_observations(wildcards):
     return observations
 
 
-def scenario_name(wildcards):
-    s = samples.query(f"group == '{wildcards.group}'")
-    num_samples_in_group = len(s)
-    if num_samples_in_group == 1:
-        if "illumina" in set(s["platform"].str.lower()):
-            return "illumina_only"
-        elif "nanopore" in set(s["platform"].str.lower()):
-            return "nanopore_only"
-        else:
-            platforms = ", ".join(set(s["platform"].str.lower()))
-            raise ValueError(
-                f"Single sample scenario not defined for platforms {platforms}"
-            )
-    elif num_samples_in_group == 2:
-        if len(set(s["platform"].str.lower()) - {"illumina", "nanopore"}) == 0:
-            return "nanopore_with_illumina_support"
-        else:
-            raise ValueError(
-                "Need both illumina and nanopore samples for this scenario"
-            )
-    else:
-        raise ValueError(
-            "Scenarios with more than two samples per group currently not supported"
-        )
-
-
-def get_scenario(wildcards):
-    scenario = scenario_name(wildcards)
-    if scenario == "nanopore_only":
-        return workflow.source_path(
-            "../resources/scenarios/nanopore_circle_scenario.yaml"
-        )
-    elif scenario == "illumina_only":
-        return workflow.source_path(
-            "../resources/scenarios/illumina_circle_scenario.yaml"
-        )
-    elif scenario == "nanopore_with_illumina_support":
-        return workflow.source_path(
-            "../resources/scenarios/nanopore_illumina_joint_circle_scenario.yaml"
-        )
-    else:
-        raise ValueError(f"Unknown scenario: {scenario}")
-
-
 def get_minimap2_mapping_params(wildcards):
     if samples.loc[wildcards.sample]["platform"].lower() == "nanopore":
         return "-x map-ont"

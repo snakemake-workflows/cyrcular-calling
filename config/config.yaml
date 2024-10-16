@@ -1,5 +1,6 @@
 samples: config/samples.tsv
 units: config/units.tsv
+calling_scenario: config/scenario.yaml
 
 reference:
   # Ensembl species name

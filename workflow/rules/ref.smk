@@ -9,13 +9,14 @@ rule get_genome:
     log:
         "logs/get-genome.log",
     params:
-        species=config["reference"]["species"],
+        species=lookup(dpath="reference/species", within=config),
         datatype="dna",
-        build=config["reference"]["build"],
-        release=config["reference"]["release"],
+        build=lookup(dpath="reference/build", within=config),
+        release=lookup(dpath="reference/release", within=config),
+        chromosome=lookup(dpath="reference/chromosome", within=config, default=[]),  # optional: restrict to one or multiple chromosomes
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     wrapper:
-        "v1.25.0/bio/reference/ensembl-sequence"
+        "v4.7.1/bio/reference/ensembl-sequence"
 
 
 rule genome_faidx:

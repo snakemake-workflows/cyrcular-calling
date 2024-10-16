@@ -51,7 +51,7 @@ rule bcftools_sort:
 rule varlociraptor_call:
     input:
         obs=get_observations,
-        scenario=get_scenario,
+        scenario="results/scenarios/{group}.yaml"
     output:
         "results/calling/calls/initial/{group}.{scatteritem}.bcf",
     log:
@@ -67,6 +67,24 @@ rule varlociraptor_call:
         "varlociraptor "
         "call variants generic --obs {params.obs} "
         "--scenario {input.scenario} > {output} 2> {log}"
+
+
+rule render_scenario:
+    input:
+        template=lookup(dpath="calling_scenario", within=config),
+    output:
+        report(
+            "results/scenarios/{group}.yaml",
+            caption="../report/scenario.rst",
+            category="Circle calling scenarios",
+            labels={"sample group": "{group}"},
+        ),
+    log:
+        "logs/render-scenario/{group}.log",
+    conda:
+        None
+    template_engine:
+        "yte"
 
 
 rule varlociraptor_alignment_properties:

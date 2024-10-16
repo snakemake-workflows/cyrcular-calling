@@ -1,1 +1,5 @@
 sample_name	unit_name	fq1	fq2
+g01_a1_i	u1	raw/g01/illumina/g01.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g01/illumina/g01.a1.mean_fragment_nucleotides_300.2.fq.gz
+g01_a1_n	u1	raw/g01/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g01.a1.mean_fragment_nucleotides_30000.fq.gz	
+g01_a2_i	u1	raw/g01/illumina/g01.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g01/illumina/g01.a2.mean_fragment_nucleotides_300.2.fq.gz
+g01_a2_n	u1	raw/g01/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g01.a2.mean_fragment_nucleotides_30000.fq.gz	
