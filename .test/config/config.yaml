@@ -1,5 +1,6 @@
 samples: config/samples.tsv
 units: config/units.tsv
+calling_scenario: config/scenario.yaml
 
 reference:
   # NOTE: ANY CHANGE OF SPECIES, RELEASE OR BUILD IN THIS TESTING
@@ -9,10 +10,13 @@ reference:
   # Genome build
   build: GRCh38
   # Ensembl release
-  release: 107
+  release: 112
   # for available downloads, please browse either of these views:
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasets.html
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasetsAlt.html
+  chromosome:
+    - "19"
+    - "21"
   repeat_masker_download_link: "http://www.repeatmasker.org/genomes/hg38/RepeatMasker-rm406-dfam2.0/hg38.fa.out.gz"
 
 

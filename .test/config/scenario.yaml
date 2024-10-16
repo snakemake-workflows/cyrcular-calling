@@ -1,0 +1,20 @@
+samples:
+  a1_n:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+  a1_i:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+  a2_n:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+  a2_i:
+    universe: "[0.0,1.0]"
+    resolution: 0.1
+
+
+events:
+  a1_only: "!a1_n:0.0 & !a1_i:0.0 &  a2_n:0.0 &  a2_i:0.0"
+  a2_only: " a1_n:0.0 &  a1_i:0.0 & !a2_n:0.0 & !a2_i:0.0"
+  both:    "!a1_n:0.0 & !a1_i:0.0 & !a2_n:0.0 & !a2_i:0.0"
+  ambiguous: "!( $a1_only | $a2_only | $both | $absent )"
