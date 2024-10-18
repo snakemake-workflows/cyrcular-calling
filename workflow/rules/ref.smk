@@ -56,19 +56,19 @@ rule minimap2_index:
         "v1.25.0/bio/minimap2/index"
 
 
-# TODO: create new ENSEMBL-REGULATORY-ANNOTATION snakemake wrapper
 rule download_regulatory_annotation:
     output:
         "resources/regulatory_annotation.gff3.gz",
+    params:
+        species=lookup(dpath="reference/species", within=config),
+        build=lookup(dpath="reference/build", within=config),
+        release=lookup(dpath="reference/release", within=config),
     log:
         "logs/download_regulatory_annotation.log",
-    params:
-        release=config["reference"].get("release", "107"),
-    cache: "omit-software"  # save space and time with between workflow caching (see docs)
-    conda:
-        "../envs/wget.yaml"
-    shell:
-        """wget https://ftp.ensembl.org/pub/release-{params.release}/regulation/homo_sapiens/homo_sapiens.GRCh38.Regulatory_Build.regulatory_features.20220201.gff.gz --no-check-certificate -O {output} 2> {log}"""
+    cache: "omit-software"  # save space and time with between workflow caching (see docs); for data downloads, software does not affect the resulting data
+    wrapper:
+        "v4.7.2/bio/reference/ensembl-regulation"
+
 
 
 rule download_repeatmasker_annotation:
