@@ -1,17 +1,17 @@
 import os
 
 
-rule circle_coverage_plot:
+rule circle_graphs_coverage_plot:
     input:
-        bam="results/calling/mapping/{sample}.bam",
-        bai="results/calling/mapping/{sample}.bam.bai",
-        graph="results/calling/graphs/{sample}.graph",
+        bam="results/mapped/{sample}.bam",
+        bai="results/mapped/{sample}.bam.bai",
+        graph="results/circle_graphs/{group}.graph",
     output:
-        plots=directory("results/calling/coverage_graphs/{sample}/"),
+        plots=directory("results/circle_graphs/{group}/coverage/{sample}/"),
     benchmark:
-        "benchmarks/cyrcular_plots/{sample}.txt"
+        "benchmarks/cyrcular_plots/{group}/{sample}.txt"
     log:
-        "logs/cyrcular_plots/{sample}.log",
+        "logs/cyrcular_plots/{group}/{sample}.log",
     conda:
         "../envs/cyrcular.yaml"
     threads: 1
@@ -25,13 +25,13 @@ rule circle_coverage_plot:
         2> {log}"""
 
 
-rule circle_graph_plots:
+rule circle_graphs_rendering:
     input:
-        graph="results/calling/graphs/{sample}",
+        graph="results/circle_graphs/{group}",
     output:
-        pdf_dir=directory("results/calling/graphs/rendered/{sample}"),
+        pdf_dir=directory("results/circle_graphs/{group}/rendered/"),
     log:
-        "logs/graphviz/{sample}.log",
+        "logs/circle_graphs_rendering/{group}.log",
     conda:
         "../envs/graphviz.yaml"
     threads: 1

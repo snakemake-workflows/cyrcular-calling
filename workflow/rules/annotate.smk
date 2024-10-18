@@ -4,16 +4,16 @@
 rule cyrcular_generate_tables:
     input:
         reference=rules.get_genome.output.genome,
-        graph="results/calling/graphs/{group}.annotated.graph",
-        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
+        graph="results/circle_graphs/{group}.annotated.graph",
+        bcf="results/circle_calls_fdr_filtered/reheader/{group}.bcf",
     output:
-        overview="results/calling/tables/{group}/{group}_overview.tsv",
-        details=directory("results/calling/tables/{group}/{group}_details/"),
+        overview="results/circle_tables/{group}/{group}_overview.tsv",
+        details=directory("results/circle_tables/{group}/{group}_details/"),
     threads: 1
     log:
-        "logs/cyrcular_generate_tables/{group}.log",
+        "logs/cyrcular/generate_tables/generate_tables.{group}.log",
     benchmark:
-        "benchmarks/cyrcular_generate_tables/{group}.txt"
+        "benchmarks/cyrcular/generate_tables/{group}.txt"
     conda:
         "../envs/cyrcular.yaml"
     shell:
@@ -23,7 +23,7 @@ rule cyrcular_generate_tables:
 rule cyrcular_annotate_graph:
     input:
         reference=rules.get_genome.output.genome,
-        graph="results/calling/graphs/{group}.graph",
+        graph="results/circle_graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",
         repeat_annotation=lambda wc: (
@@ -32,7 +32,7 @@ rule cyrcular_annotate_graph:
             else ""
         ),
     output:
-        annotated="results/calling/graphs/{group}.annotated.graph",
+        annotated="results/circle_graphs/{group}.annotated.graph",
     threads: 1
     log:
         "logs/cyrcular_annotate_graph/{group}.log",
@@ -58,10 +58,10 @@ rule cyrcular_annotate_graph:
 
 rule reheader_filtered_bcf:
     input:
-        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
-        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
+        bcf="results/circle_calls_fdr_filtered/{group}.bcf",
+        sorted_header="results/circle_calls_fdr_filtered/reheader/{group}.header.sorted.txt",
     output:
-        bcf="results/calling/calls/filtered_fdr/reheader/{group}.bcf",
+        bcf="results/circle_calls_fdr_filtered/reheader/{group}.bcf",
     log:
         "logs/reheader_filtered_bcf/{group}.log",
     conda:
@@ -78,10 +78,10 @@ rule reheader_filtered_bcf:
 
 rule sort_bcf_header:
     input:
-        bcf="results/calling/calls/filtered_fdr/{group}.bcf",
-        header="results/calling/calls/filtered_fdr/{group}.header.txt",
+        bcf="results/circle_calls_fdr_filtered/{group}.bcf",
+        header="results/circle_calls_fdr_filtered/{group}.header.txt",
     output:
-        sorted_header="results/calling/calls/filtered_fdr/reheader/{group}.header.sorted.txt",
+        sorted_header="results/circle_calls_fdr_filtered/reheader/{group}.header.sorted.txt",
     log:
         "logs/sort_bcf_header/{group}.log",
     conda:
@@ -107,7 +107,7 @@ rule get_bcf_header:
 
 rule extract_vcf_header_lines_for_bcftools_annotate:
     input:
-        vcf="results/calling/candidates/{sample}.sorted.bcf",
+        vcf="results/candidates/{sample}.sorted.bcf",
     output:
         header=temp("results/calling/annotation/{sample}.header_lines.txt"),
     params:

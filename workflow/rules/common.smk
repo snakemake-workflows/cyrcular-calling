@@ -61,15 +61,17 @@ def get_all_input(wildcards):
     targets = []
     targets += expand("results/datavzrd-report/{group}.fdr-controlled", group=GROUPS)
     targets += expand(
-        "results/tmp/{group}.{category}.qc_plots.marker",
-        group=GROUPS,
-        category=CATEGORIES,
-    )
-    targets += expand(
         "results/tmp/{group}.{category}.graph_plots.marker",
         group=GROUPS,
         category=CATEGORIES,
     )
+    for group in GROUPS:
+        targets += expand(
+            "results/tmp/{group}.{sample}.{category}.qc_plots.marker",
+            group=group,
+            sample=lookup(query="group == '{wildcards.group}'", cols="sample_name", within=samples),
+            category=CATEGORIES,
+        )
     return targets
 
 
@@ -81,79 +83,11 @@ def pairhmm_mode(wildcards):
     return mode
 
 
-def get_group_candidates(wildcards):
-    sample = wildcards.sample
-    group = samples.loc[sample]["group"]
-    wildcards.group = group
-    scenario = scenario_name(wildcards)
-    if scenario == "nanopore_only":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    elif scenario == "illumina_only":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'illumina'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    elif scenario == "nanopore_with_illumina_support":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    else:
-        raise ValueError(f"Unknown scenario: {scenario}")
-
-
-def observation_string(wildcards, input):
-    group_size = len(samples.query(f"group == '{wildcards.group}'"))
-    scenario = scenario_name(wildcards)
-    if group_size == 1:
-        if scenario == "nanopore_only":
-            return f"nanopore={input.obs[0]}"
-        elif scenario == "illumina_only":
-            return f"illumina={input.obs[0]}"
-    elif group_size == 2:
-        return f"nanopore={input.obs[0]} illumina={input.obs[1]}"
-    else:
-        raise ValueError(
-            f"Too many samples ({group_size}) for this group ({wildcards.group}) and scenario ({scenario})"
-        )
-
-
-def get_observations(wildcards):
-    s = samples.query(f"group == '{wildcards.group}'")
-    if len(s) == 0:
-        raise ValueError(f"No samples for group {wildcards.group}")
-
-    observations = []
-
-    has_nanopore = len(s.query("platform.str.lower() == 'nanopore'")["sample_name"]) > 0
-    has_illumina = len(s.query("platform.str.lower() == 'illumina'")["sample_name"]) > 0
-
-    if has_nanopore:
-        for sample_nanopore in list(
-            s.query("platform.str.lower() == 'nanopore'")["sample_name"]
-        ):
-            observations.append(
-                f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
-            )
-
-    if has_illumina:
-        for sample_illumina in list(
-            s.query("platform.str.lower() == 'illumina'")["sample_name"]
-        ):
-            observations.append(
-                f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
-            )
-
-    return observations
+def get_varlociraptor_obs_args(wildcards, input):
+    return [
+        "{}={}".format(s, f)
+        for s, f in zip(lookup(query="group == 'wildcards.group'", cols="alias", within=samples), input.obs)
+    ]
 
 
 def get_minimap2_mapping_params(wildcards):
@@ -168,11 +102,11 @@ def get_minimap2_mapping_params(wildcards):
 def get_minimap2_input(wildcards):
     if units.loc[wildcards.sample]["fq2"].any():
         return [
-            "results/calling/merged/{sample}_R1.fastq.gz",
-            "results/calling/merged/{sample}_R2.fastq.gz",
+            "results/merged_fastqs/{sample}_R1.fastq.gz",
+            "results/merged_fastqs/{sample}_R2.fastq.gz",
         ]
     else:
-        return ["results/calling/merged/{sample}_single.fastq.gz"]
+        return ["results/merged_fastqs/{sample}_single.fastq.gz"]
 
 
 def get_fastqs(wildcards):
