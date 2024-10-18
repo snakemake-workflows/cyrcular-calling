@@ -67,10 +67,11 @@ rule varlociraptor_call:
         "benchmarks/varlociraptor/calls/scattered/{group}.{scatteritem}.tsv"
     threads: 1
     shell:
-        "( varlociraptor call variants generic "
+        "( varlociraptor call variants "
+        "   --output {output} "
+        "   generic "
         "   --obs {params.obs} "
         "   --scenario {input.scenario} "
-        "   {output} "
         ") 2> {log}"
 
 
@@ -97,6 +98,7 @@ rule varlociraptor_alignment_properties:
         ref=rules.get_genome.output.genome,
         ref_idx=rules.genome_faidx.output.index,
         bam="results/mapped/{sample}.bam",
+        bai="results/mapped/{sample}.bam.bai",
     output:
         "results/calling/alignment-properties/{sample}.json",
     log:
