@@ -84,9 +84,10 @@ def pairhmm_mode(wildcards):
 
 
 def get_varlociraptor_obs_args(wildcards, input):
+    aliases = samples.loc[samples["group"] == wildcards.group, "alias"]
     return [
         "{}={}".format(s, f)
-        for s, f in zip(lookup(query="group == 'wildcards.group'", cols="alias", within=samples), input.obs)
+        for s, f in zip(aliases, input.obs)
     ]
 
 
