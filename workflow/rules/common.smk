@@ -32,11 +32,12 @@ samples = read_samples()
 SAMPLES = list(sorted(set(samples["sample_name"])))
 GROUPS = list(sorted(set(samples["group"])))
 CATEGORIES = ["coding", "regulatory", "intronic", "other"]
-
+EVENTS=lookup(dpath="filter/fdr-control/events", within=config)
 
 wildcard_constraints:
     sample="|".join(SAMPLES),
     group="|".join(GROUPS),
+    event="|".join(EVENTS),
 
 
 def read_units():
@@ -59,16 +60,22 @@ units = read_units()
 
 def get_all_input(wildcards):
     targets = []
-    targets += expand("results/datavzrd-report/{group}.fdr-controlled", group=GROUPS)
     targets += expand(
-        "results/tmp/{group}.{category}.graph_plots.marker",
+        "results/datavzrd-report/{group}.{event}.fdr-controlled",
         group=GROUPS,
+        event=EVENTS,
+    )
+    targets += expand(
+        "results/tmp/{group}.{event}.{category}.graph_plots.marker",
+        group=GROUPS,
+        event=EVENTS,
         category=CATEGORIES,
     )
     for group in GROUPS:
         targets += expand(
-            "results/tmp/{group}.{sample}.{category}.qc_plots.marker",
+            "results/tmp/{group}.{event}.{sample}.{category}.qc_plots.marker",
             group=group,
+            event=EVENTS,
             sample=lookup(query="group == '{wildcards.group}'", cols="sample_name", within=samples),
             category=CATEGORIES,
         )
