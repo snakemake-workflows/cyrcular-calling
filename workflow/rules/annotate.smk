@@ -46,6 +46,8 @@ rule cyrcular_annotate_graph:
             if config["reference"].get("repeat_masker_download_link", "")
             else ""
         ),
+    resources:
+        mem_mb=lambda wc, input: 20 * input.size_mb
     shell:
         "cyrcular graph annotate "
         "  --reference {input.reference} "
