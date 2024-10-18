@@ -31,7 +31,7 @@ rule varlociraptor_filter_fdr:
     params:
         fdr=config["filter"]["fdr-control"].get("threshold", 0.05),
         mode=varlociraptor_filtering_mode,
-        events=lambda wc: ",".join([e.upper() for e in lookup(dpath=f"filter/fdr-control/events/{wc.event}/varlociraptor", within=config)]),
+        events=lookup(dpath="filter/fdr-control/events/{event}/varlociraptor", within=config),
     shell:
         "( varlociraptor filter-calls control-fdr "
         "   --mode {params.mode} "
