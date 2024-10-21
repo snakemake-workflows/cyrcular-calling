@@ -184,7 +184,6 @@ rule cyrcular_call_circle_bnds:
         "logs/cyrcular/call_circle_bnds/call_circle_bnds.{group}.log",
     benchmark:
         "benchmarks/cyrcular/call_circle_bnds/call_circle_bnds.{group}.txt"
-    threads: 4
     params:
         min_read_depth=config["cyrcular"]["min_read_depth"],  # 2
         min_split_reads=config["cyrcular"]["min_split_reads"],  # 5
@@ -192,6 +191,9 @@ rule cyrcular_call_circle_bnds:
         max_deletion_length=config["cyrcular"]["max_deletion_length"],  # 10000,
     conda:
         "../envs/cyrcular.yaml"
+    threads: 4
+    resources:
+        mem_mb=lambda wc, input: input.size_mb * 3,
     shell:
         """cyrcular\
         graph\
