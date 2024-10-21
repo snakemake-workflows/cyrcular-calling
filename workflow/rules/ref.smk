@@ -52,7 +52,7 @@ rule minimap2_index:
     # Minimap2 uses at most three threads when indexing target sequences:
     # https://lh3.github.io/minimap2/minimap2.html
     resources:
-        mem_mb=lambda wc, input: input.size_mb * 5
+        mem_mb=lambda wc, input: input.size_mb * 5,
     threads: 3
     wrapper:
         "v1.25.0/bio/minimap2/index"

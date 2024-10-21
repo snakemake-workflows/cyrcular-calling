@@ -34,7 +34,7 @@ rule minimap2_bam:
         sorting="coordinate",  # optional: Enable sorting. Possible values: 'none', 'queryname' or 'coordinate'
         sort_extra=lambda wc, threads: f"-@ {min(threads , 4)}",  # optional: extra arguments for samtools/picard
     resources:
-        mem_mb=lamba wc, input: input.size * 2
+        mem_mb=lambda wc, input: input.size_mb * 2,
     threads: workflow.cores // 2
     wrapper:
         "v1.25.0/bio/minimap2/aligner"
