@@ -35,7 +35,7 @@ rule minimap2_bam:
         sort_extra=lambda wc, threads: f"-@ {min(threads , 4)}",  # optional: extra arguments for samtools/picard
     resources:
         mem_mb=lambda wc, input: input.size_mb * 2,
-    threads: workflow.cores // 2
+    threads: 8
     wrapper:
         "v1.25.0/bio/minimap2/aligner"
 
@@ -52,7 +52,7 @@ rule samtools_merge_nanopore_per_group:
         "logs/calling/mapping/{group}.nanopore_samples.merging.log",
     params:
         extra="",  # optional additional parameters as string
-    threads: 8
+    threads: 4
     wrapper:
         "v4.7.2/bio/samtools/merge"
 
@@ -69,7 +69,7 @@ rule samtools_index:
     params:
         "",  # optional params string
     # Samtools takes additional threads through its option -@
-    threads: 12  # This value - 1 will be sent to -@
+    threads: 4  # This value - 1 will be sent to -@
     wrapper:
         "v1.25.0/bio/samtools/index"
 
@@ -86,6 +86,6 @@ rule samtools_faidx:
     params:
         "",  # optional params string
     # Samtools takes additional threads through its option -@
-    threads: 12  # This value - 1 will be sent to -@
+    threads: 4  # This value - 1 will be sent to -@
     wrapper:
         "v1.25.0/bio/samtools/faidx"
