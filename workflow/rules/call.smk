@@ -193,7 +193,7 @@ rule cyrcular_call_circle_bnds:
         "../envs/cyrcular.yaml"
     threads: 4
     resources:
-        mem_mb=lambda wc, input: input.size_mb * 3,
+        mem_mb=lambda wc, input: input.size_mb * 8,
     shell:
         """cyrcular\
         graph\
