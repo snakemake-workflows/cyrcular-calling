@@ -9,15 +9,25 @@ rule cyrcular_generate_tables:
     output:
         overview="results/circle_tables/{group}/{group}.{event}_overview.tsv",
         details=directory("results/circle_tables/{group}/{group}.{event}_details/"),
-    threads: 1
     log:
         "logs/cyrcular/generate_tables/generate_tables.{group}.{event}.log",
     benchmark:
         "benchmarks/cyrcular/generate_tables/{group}.{event}.txt"
     conda:
         "../envs/cyrcular.yaml"
+    params:
+        event_names=",".join(lookup(dpath="filter/fdr-control/events/{event}/varlociraptor", within=config)),
+    threads: 1
     shell:
-        """cyrcular graph table {input.graph} {input.bcf} --reference {input.reference} --circle-table {output.overview} --segment-tables {output.details} 2> {log}"""
+        "( cyrcular graph table "
+        "    {input.graph} "
+        "    {input.bcf} "
+        "    --reference {input.reference} "
+        "    --event-names {params.event_names} "
+        "    --joint-event-name {wildcards.event} "
+        "    --circle-table {output.overview} "
+        "    --segment-tables {output.details} "
+        ") 2> {log}"""
 
 
 rule cyrcular_annotate_graph:
