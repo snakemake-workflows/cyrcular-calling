@@ -16,7 +16,7 @@ rule cyrcular_generate_tables:
     conda:
         "../envs/cyrcular.yaml"
     params:
-        event_names=",".join(lookup(dpath="filter/fdr-control/events/{event}/varlociraptor", within=config)),
+        event_names=lambda wc: ",".join(lookup(dpath=f"filter/fdr-control/events/{wc.event}/varlociraptor", within=config)),
     threads: 1
     shell:
         "( cyrcular graph table "
