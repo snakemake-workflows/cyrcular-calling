@@ -37,6 +37,7 @@ rule render_datavzrd_config:
         detail_tables=lambda wc, input: get_detail_tables_group_circle_path_for_report(
             wc, input
         ),
+        samples=lookup(query="group == '{group}'", cols="sample_name", within=samples),
     log:
         "logs/datavzrd_render/{group}.{event}.log",
     template_engine:
