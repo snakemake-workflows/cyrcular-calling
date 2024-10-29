@@ -67,6 +67,7 @@ rule datavzrd_circle_calls:
 
 
 rule copy_qc_plots_for_datavzrd:
+    localrule: True
     input:
         plots="results/circle_graphs/{group}/coverage/{sample}",
         overview="results/circle_tables/{group}/{group}.{event}_overview.{category}.tsv",
@@ -74,8 +75,8 @@ rule copy_qc_plots_for_datavzrd:
     output:
         marker="results/tmp/{group}.{event}.{sample}.{category}.qc_plots.marker",
     params:
-        output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/qc_plots"
+        output_dir=lambda wc, input: directory(
+            f"{input.report}/qc_plots"
         ),
     log:
         "logs/datavzrd/copy_qc_plots/{group}.{event}.{sample}.{category}.log",
@@ -86,6 +87,7 @@ rule copy_qc_plots_for_datavzrd:
 
 
 rule copy_graph_plots_for_datavzrd:
+    localrule: True
     input:
         plots="results/circle_graphs/{group}/rendered",
         overview="results/circle_tables/{group}/{group}.{event}_overview.{category}.tsv",
@@ -93,8 +95,8 @@ rule copy_graph_plots_for_datavzrd:
     output:
         marker="results/tmp/{group}.{event}.{category}.graph_plots.marker",
     params:
-        output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/graphs"
+        output_dir=lambda wc, input: directory(
+            f"{input.report}/graphs"
         ),
     log:
         "logs/datavzrd/copy_graph_plots/{group}{event}.{category}.log",

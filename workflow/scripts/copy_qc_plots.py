@@ -13,6 +13,6 @@ with open(snakemake.log[0], "w") as logfile:
         for event_id in event_ids:
             shutil.copy(
                 f"{snakemake.input.plots}/graph_{event_id}.html",
-                snakemake.params.output_dir,
+                f"{snakemake.params.output_dir}/graph_{event_id}_{snakemake.wildcards.sample}.html",
             )
         Path(snakemake.output.marker).touch()
