@@ -76,7 +76,7 @@ def get_all_input(wildcards):
             "results/tmp/{group}.{event}.{sample}.{category}.qc_plots.marker",
             group=group,
             event=EVENTS,
-            sample=lookup(query="group == '{wildcards.group}'", cols="sample_name", within=samples),
+            sample=samples.loc[samples["group"] == group, "sample_name"],
             category=CATEGORIES,
         )
     return targets
