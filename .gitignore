@@ -1,10 +1,9 @@
 .test/benchmarks/**
 .test/logs/**
-.test/resources/*.fai
-.test/resources/*.gz
-.test/resources/*.mmi
+.test/resources/**
 .test/results/**
 .test/.snakemake/**
+.test/*.zip
 benchmarks/**
 logs/**
 resources/**
