@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/snakemake-workflows/cyrcular-calling/compare/v2.1.1...v2.1.2) (2024-10-30)
+
+
+### Bug Fixes
+
+* Fix gene card link formatter for datavzrd report and update linkout styles ([33ba70b](https://github.com/snakemake-workflows/cyrcular-calling/commit/33ba70bc029cb79e61333615564c94046485b7c4))
+
 ## [2.1.1](https://github.com/snakemake-workflows/cyrcular-calling/compare/v2.1.0...v2.1.1) (2024-08-19)
 
 
