@@ -4,7 +4,7 @@ function gene_card_link_formatter(value, row) {
     for (let g of genes) {
         rows += `<tr style="background-color: #f9f9f9; text-align: left;">
                     <td style="padding: 8px; border: 1px solid #dee2e6;">
-                        <a style="color: #007bff; text-decoration: none;" data-toggle="tooltip" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${g}" target="_blank" rel="noopener noreferrer">${g}</a>
+                        <a style="color: #007bff;" title="Linkout to genecards" href="https://www.genecards.org/cgi-bin/carddisp.pl?gene=${g}" target="_blank" rel="noopener noreferrer">${g}</a>
                     </td>
                 </tr>`;
     }
