@@ -32,11 +32,12 @@ samples = read_samples()
 SAMPLES = list(sorted(set(samples["sample_name"])))
 GROUPS = list(sorted(set(samples["group"])))
 CATEGORIES = ["coding", "regulatory", "intronic", "other"]
-
+EVENTS=lookup(dpath="filter/fdr-control/events", within=config)
 
 wildcard_constraints:
     sample="|".join(SAMPLES),
     group="|".join(GROUPS),
+    event="|".join(EVENTS),
 
 
 def read_units():
@@ -59,17 +60,25 @@ units = read_units()
 
 def get_all_input(wildcards):
     targets = []
-    targets += expand("results/datavzrd-report/{group}.fdr-controlled", group=GROUPS)
     targets += expand(
-        "results/tmp/{group}.{category}.qc_plots.marker",
+        "results/datavzrd-report/{group}.{event}.fdr-controlled",
         group=GROUPS,
-        category=CATEGORIES,
+        event=EVENTS,
     )
     targets += expand(
-        "results/tmp/{group}.{category}.graph_plots.marker",
+        "results/tmp/{group}.{event}.{category}.graph_plots.marker",
         group=GROUPS,
+        event=EVENTS,
         category=CATEGORIES,
     )
+    for group in GROUPS:
+        targets += expand(
+            "results/tmp/{group}.{event}.{sample}.{category}.qc_plots.marker",
+            group=group,
+            event=EVENTS,
+            sample=samples.loc[samples["group"] == group, "sample_name"],
+            category=CATEGORIES,
+        )
     return targets
 
 
@@ -81,123 +90,12 @@ def pairhmm_mode(wildcards):
     return mode
 
 
-def get_group_candidates(wildcards):
-    sample = wildcards.sample
-    group = samples.loc[sample]["group"]
-    wildcards.group = group
-    scenario = scenario_name(wildcards)
-    if scenario == "nanopore_only":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    elif scenario == "illumina_only":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'illumina'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    elif scenario == "nanopore_with_illumina_support":
-        sample = list(
-            samples.query(f"group == '{group}' & platform.str.lower() == 'nanopore'")[
-                "sample_name"
-            ]
-        )[0]
-        return f"results/calling/candidate-calls/{sample}.{{scatteritem}}.bcf"
-    else:
-        raise ValueError(f"Unknown scenario: {scenario}")
-
-
-def observation_string(wildcards, input):
-    group_size = len(samples.query(f"group == '{wildcards.group}'"))
-    scenario = scenario_name(wildcards)
-    if group_size == 1:
-        if scenario == "nanopore_only":
-            return f"nanopore={input.obs[0]}"
-        elif scenario == "illumina_only":
-            return f"illumina={input.obs[0]}"
-    elif group_size == 2:
-        return f"nanopore={input.obs[0]} illumina={input.obs[1]}"
-    else:
-        raise ValueError(
-            f"Too many samples ({group_size}) for this group ({wildcards.group}) and scenario ({scenario})"
-        )
-
-
-def get_observations(wildcards):
-    s = samples.query(f"group == '{wildcards.group}'")
-    if len(s) == 0:
-        raise ValueError(f"No samples for group {wildcards.group}")
-
-    observations = []
-
-    has_nanopore = len(s.query("platform.str.lower() == 'nanopore'")["sample_name"]) > 0
-    has_illumina = len(s.query("platform.str.lower() == 'illumina'")["sample_name"]) > 0
-
-    if has_nanopore:
-        for sample_nanopore in list(
-            s.query("platform.str.lower() == 'nanopore'")["sample_name"]
-        ):
-            observations.append(
-                f"results/calling/calls/observations/{sample_nanopore}.{{scatteritem}}.bcf"
-            )
-
-    if has_illumina:
-        for sample_illumina in list(
-            s.query("platform.str.lower() == 'illumina'")["sample_name"]
-        ):
-            observations.append(
-                f"results/calling/calls/observations/{sample_illumina}.{{scatteritem}}.bcf"
-            )
-
-    return observations
-
-
-def scenario_name(wildcards):
-    s = samples.query(f"group == '{wildcards.group}'")
-    num_samples_in_group = len(s)
-    if num_samples_in_group == 1:
-        if "illumina" in set(s["platform"].str.lower()):
-            return "illumina_only"
-        elif "nanopore" in set(s["platform"].str.lower()):
-            return "nanopore_only"
-        else:
-            platforms = ", ".join(set(s["platform"].str.lower()))
-            raise ValueError(
-                f"Single sample scenario not defined for platforms {platforms}"
-            )
-    elif num_samples_in_group == 2:
-        if len(set(s["platform"].str.lower()) - {"illumina", "nanopore"}) == 0:
-            return "nanopore_with_illumina_support"
-        else:
-            raise ValueError(
-                "Need both illumina and nanopore samples for this scenario"
-            )
-    else:
-        raise ValueError(
-            "Scenarios with more than two samples per group currently not supported"
-        )
-
-
-def get_scenario(wildcards):
-    scenario = scenario_name(wildcards)
-    if scenario == "nanopore_only":
-        return workflow.source_path(
-            "../resources/scenarios/nanopore_circle_scenario.yaml"
-        )
-    elif scenario == "illumina_only":
-        return workflow.source_path(
-            "../resources/scenarios/illumina_circle_scenario.yaml"
-        )
-    elif scenario == "nanopore_with_illumina_support":
-        return workflow.source_path(
-            "../resources/scenarios/nanopore_illumina_joint_circle_scenario.yaml"
-        )
-    else:
-        raise ValueError(f"Unknown scenario: {scenario}")
+def get_varlociraptor_obs_args(wildcards, input):
+    aliases = samples.loc[samples["group"] == wildcards.group, "alias"]
+    return [
+        "{}={}".format(s, f)
+        for s, f in zip(aliases, input.obs)
+    ]
 
 
 def get_minimap2_mapping_params(wildcards):
@@ -212,11 +110,11 @@ def get_minimap2_mapping_params(wildcards):
 def get_minimap2_input(wildcards):
     if units.loc[wildcards.sample]["fq2"].any():
         return [
-            "results/calling/merged/{sample}_R1.fastq.gz",
-            "results/calling/merged/{sample}_R2.fastq.gz",
+            "results/merged_fastqs/{sample}_R1.fastq.gz",
+            "results/merged_fastqs/{sample}_R2.fastq.gz",
         ]
     else:
-        return ["results/calling/merged/{sample}_single.fastq.gz"]
+        return ["results/merged_fastqs/{sample}_single.fastq.gz"]
 
 
 def get_fastqs(wildcards):

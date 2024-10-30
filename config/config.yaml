@@ -1,5 +1,6 @@
 samples: config/samples.tsv
 units: config/units.tsv
+calling_scenario: config/scenario.yaml
 
 reference:
   # Ensembl species name
@@ -30,9 +31,21 @@ filter:
     threshold: 0.1
     mode: local-smart
     events:
-      circular:
+      circular_a1_only:
         varlociraptor:
-          - present
+          - a1_only
+      circular_a2_only:
+        varlociraptor:
+          - a2_only
+      circular_both:
+        varlociraptor:
+          - both
+      circular_unambiguous:
+        varlociraptor:
+          - a1_only
+          - a2_only
+          - both
+
   circles:
     min-length: 100
     max-length: 50_000_000

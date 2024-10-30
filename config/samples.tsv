@@ -1,1 +1,5 @@
-group	sample_name	platform
+sample_name	group	alias	platform
+g01_a1_n	g01	a1_n	NANOPORE
+g01_a1_i	g01	a1_i	ILLUMINA
+g01_a2_n	g01	a2_n	NANOPORE
+g01_a2_i	g01	a2_i	ILLUMINA

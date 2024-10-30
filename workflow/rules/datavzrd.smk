@@ -13,12 +13,12 @@ rule render_datavzrd_config:
             "../resources/datavzrd/circle-table-template.datavzrd.yaml"
         ),
         summary_spec=workflow.source_path("../resources/datavzrd/summary_plot.json"),
-        categorized_overview_table="results/calling/tables/{group}/{group}_categorized_overview.tsv",
+        categorized_overview_table="results/circle_tables/{group}/{group}.{event}_categorized_overview.tsv",
         overview_tables=expand(
-            "results/calling/tables/{{group}}/{{group}}_overview.{category}.tsv",
+            "results/circle_tables/{{group}}/{{group}}.{{event}}_overview.{category}.tsv",
             category=CATEGORIES,
         ),
-        detail_tables="results/calling/tables/{group}/{group}_details/",
+        detail_tables="results/circle_tables/{group}/{group}.{event}_details/",
         circle_qc_plot_link_formatter=workflow.source_path(
             "../scripts/circle_qc_plot_link_formatter.js"
         ),
@@ -27,7 +27,7 @@ rule render_datavzrd_config:
             "../scripts/gene_card_link_formatter.js"
         ),
     output:
-        "results/datavzrd/{group}.datavzrd.yaml",
+        "results/datavzrd/{group}.{event}.datavzrd.yaml",
     params:
         categories=CATEGORIES,
         overview_tables=lambda wc, input: [
@@ -37,25 +37,50 @@ rule render_datavzrd_config:
         detail_tables=lambda wc, input: get_detail_tables_group_circle_path_for_report(
             wc, input
         ),
+        samples=lookup(query="group == '{group}'", cols="sample_name", within=samples),
     log:
-        "logs/datavzrd_render/{group}.log",
+        "logs/datavzrd_render/{group}.{event}.log",
     template_engine:
         "yte"
 
 
-rule copy_qc_plots_for_datavzrd:
+rule datavzrd_circle_calls:
     input:
-        plots="results/calling/coverage_graphs/{group}",
-        overview="results/calling/tables/{group}/{group}_overview.{category}.tsv",
-        report="results/datavzrd-report/{group}.fdr-controlled",
+        config="results/datavzrd/{group}.{event}.datavzrd.yaml",
+        overview_tables=expand(
+            "results/circle_tables/{group}/{group}.{event}_overview.{category}.tsv",
+            category=CATEGORIES,
+            allow_missing=True,
+        ),
+        detail_tables="results/circle_tables/{group}/{group}.{event}_details/",
     output:
-        marker="results/tmp/{group}.{category}.qc_plots.marker",
+        report(
+            directory("results/datavzrd-report/{group}.{event}.fdr-controlled"),
+            htmlindex="index.html",
+            category="Circle calls",
+        ),
+    conda:
+        "../envs/datavzrd.yaml"
+    log:
+        "logs/datavzrd_report/{group}.{event}.log",
+    shell:
+        "datavzrd {input.config} --output {output} &> {log}"
+
+
+rule copy_qc_plots_for_datavzrd:
+    localrule: True
+    input:
+        plots="results/circle_graphs/{group}/coverage/{sample}",
+        overview="results/circle_tables/{group}/{group}.{event}_overview.{category}.tsv",
+        report="results/datavzrd-report/{group}.{event}.fdr-controlled",
+    output:
+        marker="results/tmp/{group}.{event}.{sample}.{category}.qc_plots.marker",
     params:
-        output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/qc_plots"
+        output_dir=lambda wc, input: directory(
+            f"{input.report}/qc_plots"
         ),
     log:
-        "logs/datavzrd/copy_qc_plots/{group}.{category}.log",
+        "logs/datavzrd/copy_qc_plots/{group}.{event}.{sample}.{category}.log",
     conda:
         "../envs/pandas.yaml"
     script:
@@ -63,42 +88,20 @@ rule copy_qc_plots_for_datavzrd:
 
 
 rule copy_graph_plots_for_datavzrd:
+    localrule: True
     input:
-        plots="results/calling/graphs/rendered/{group}",
-        overview="results/calling/tables/{group}/{group}_overview.{category}.tsv",
-        report="results/datavzrd-report/{group}.fdr-controlled",
+        plots="results/circle_graphs/{group}/rendered",
+        overview="results/circle_tables/{group}/{group}.{event}_overview.{category}.tsv",
+        report="results/datavzrd-report/{group}.{event}.fdr-controlled",
     output:
-        marker="results/tmp/{group}.{category}.graph_plots.marker",
+        marker="results/tmp/{group}.{event}.{category}.graph_plots.marker",
     params:
-        output_dir=lambda wc: directory(
-            f"results/datavzrd-report/{wc.group}.fdr-controlled/graphs"
+        output_dir=lambda wc, input: directory(
+            f"{input.report}/graphs"
         ),
     log:
-        "logs/datavzrd/copy_graph_plots/{group}.{category}.log",
+        "logs/datavzrd/copy_graph_plots/{group}{event}.{category}.log",
     conda:
         "../envs/pandas.yaml"
     script:
         "../scripts/copy_graph_plots.py"
-
-
-rule datavzrd_circle_calls:
-    input:
-        config="results/datavzrd/{group}.datavzrd.yaml",
-        overview_tables=expand(
-            "results/calling/tables/{group}/{group}_overview.{category}.tsv",
-            category=CATEGORIES,
-            allow_missing=True,
-        ),
-        detail_tables="results/calling/tables/{group}/{group}_details/",
-    output:
-        report(
-            directory("results/datavzrd-report/{group}.fdr-controlled"),
-            htmlindex="index.html",
-            category="Circle calls",
-        ),
-    conda:
-        "../envs/datavzrd.yaml"
-    log:
-        "logs/datavzrd_report/{group}.log",
-    shell:
-        "datavzrd {input.config} --output {output} &> {log}"

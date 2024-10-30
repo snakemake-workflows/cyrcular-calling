@@ -1,5 +1,6 @@
 samples: config/samples.tsv
 units: config/units.tsv
+calling_scenario: config/scenario.yaml
 
 reference:
   # NOTE: ANY CHANGE OF SPECIES, RELEASE OR BUILD IN THIS TESTING
@@ -9,10 +10,13 @@ reference:
   # Genome build
   build: GRCh38
   # Ensembl release
-  release: 107
+  release: 112
   # for available downloads, please browse either of these views:
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasets.html
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasetsAlt.html
+  chromosome:
+    - "19"
+    - "21"
   repeat_masker_download_link: "http://www.repeatmasker.org/genomes/hg38/RepeatMasker-rm406-dfam2.0/hg38.fa.out.gz"
 
 
@@ -32,9 +36,21 @@ filter:
     threshold: 0.1
     mode: local-smart
     events:
-      circular:
+      circular_a1_only:
         varlociraptor:
-          - present
+          - a1_only
+      circular_a2_only:
+        varlociraptor:
+          - a2_only
+      circular_both:
+        varlociraptor:
+          - both
+      circular_unambiguous:
+        varlociraptor:
+          - a1_only
+          - a2_only
+          - both
+
   circles:
     min-length: 100
     max-length: 50_000_000

@@ -1,2 +1,21 @@
 sample_name	unit_name	fq1	fq2
-example	0	data/example_reads.fastq.gz	
+g01_a1_i	u1	raw/g01/illumina/g01.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g01/illumina/g01.a1.mean_fragment_nucleotides_300.2.fq.gz
+g01_a1_n	u1	raw/g01/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g01.a1.mean_fragment_nucleotides_30000.fq.gz	
+g01_a2_i	u1	raw/g01/illumina/g01.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g01/illumina/g01.a2.mean_fragment_nucleotides_300.2.fq.gz
+g01_a2_n	u1	raw/g01/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g01.a2.mean_fragment_nucleotides_30000.fq.gz	
+g02_a1_i	u1	raw/g02/illumina/g02.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g02/illumina/g02.a1.mean_fragment_nucleotides_300.2.fq.gz
+g02_a1_n	u1	raw/g02/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g02.a1.mean_fragment_nucleotides_30000.fq.gz	
+g02_a2_i	u1	raw/g02/illumina/g02.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g02/illumina/g02.a2.mean_fragment_nucleotides_300.2.fq.gz
+g02_a2_n	u1	raw/g02/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g02.a2.mean_fragment_nucleotides_30000.fq.gz	
+g03_a1_i	u1	raw/g03/illumina/g03.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g03/illumina/g03.a1.mean_fragment_nucleotides_300.2.fq.gz
+g03_a1_n	u1	raw/g03/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g03.a1.mean_fragment_nucleotides_30000.fq.gz	
+g03_a2_i	u1	raw/g03/illumina/g03.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g03/illumina/g03.a2.mean_fragment_nucleotides_300.2.fq.gz
+g03_a2_n	u1	raw/g03/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g03.a2.mean_fragment_nucleotides_30000.fq.gz	
+g04_a1_i	u1	raw/g04/illumina/g04.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g04/illumina/g04.a1.mean_fragment_nucleotides_300.2.fq.gz
+g04_a1_n	u1	raw/g04/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g04.a1.mean_fragment_nucleotides_30000.fq.gz	
+g04_a2_i	u1	raw/g04/illumina/g04.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g04/illumina/g04.a2.mean_fragment_nucleotides_300.2.fq.gz
+g04_a2_n	u1	raw/g04/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g04.a2.mean_fragment_nucleotides_30000.fq.gz	
+g05_a1_i	u1	raw/g05/illumina/g05.a1.mean_fragment_nucleotides_300.1.fq.gz	raw/g05/illumina/g05.a1.mean_fragment_nucleotides_300.2.fq.gz
+g05_a1_n	u1	raw/g05/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g05.a1.mean_fragment_nucleotides_30000.fq.gz	
+g05_a2_i	u1	raw/g05/illumina/g05.a2.mean_fragment_nucleotides_300.1.fq.gz	raw/g05/illumina/g05.a2.mean_fragment_nucleotides_300.2.fq.gz
+g05_a2_n	u1	raw/g05/nanopore/human_NA12878_DNA_FAB49712_guppy/training/g05.a2.mean_fragment_nucleotides_30000.fq.gz	

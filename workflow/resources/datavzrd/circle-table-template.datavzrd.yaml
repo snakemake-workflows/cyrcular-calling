@@ -74,7 +74,7 @@ views:
               | `regulatory_features` | Regulatory features overlapping with coverage segments                          |\n
               | `repeats`             | Repeats known to repeatMasker overlapping with coverage segments                |\n
               | `num_split_reads`     | Total number of split reads on all split edges of the circle                    |\n
-              | `prob_present`        | Probability of a circle being present as calculated by varlociraptor            |\n
+              | `prob_{wildcards.event}` | Probability of a circle being present as calculated by varlociraptor         |\n
               | `prob_absent`         | Probability of a circle being absent as calculated by varlociraptor             |\n
               | `prob_artifact`       | Probability of a circle being deemed an artefact as calculated by varlociraptor |\n
               | `af_*`                | Allele frequency of the circle for the respective sample                        |\n
@@ -87,8 +87,12 @@ views:
         columns:
           "graph_id":
             custom-path: ?input.graph_link_formatter
-          "circle_id":
-            custom-path: ?input.circle_qc_plot_link_formatter
+          circle_id:
+            link-to-url:
+              ?for sample_name in params.samples:
+                ?f"{sample_name}":
+                  url: ?f"../qc_plots/graph_{{graph_id}}_{{value}}_{sample_name}.html"
+#            custom-path: ?input.circle_qc_plot_link_formatter
           "regions":
             custom: ?regions_links
           "regex('prob_(.+)')":

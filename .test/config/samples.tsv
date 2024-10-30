@@ -1,2 +1,21 @@
-group	sample_name	platform
-example	example	nanopore
+sample_name	group	alias	platform
+g01_a1_n	g01	a1_n	NANOPORE
+g01_a1_i	g01	a1_i	ILLUMINA
+g01_a2_n	g01	a2_n	NANOPORE
+g01_a2_i	g01	a2_i	ILLUMINA
+g02_a1_n	g02	a1_n	NANOPORE
+g02_a1_i	g02	a1_i	ILLUMINA
+g02_a2_n	g02	a2_n	NANOPORE
+g02_a2_i	g02	a2_i	ILLUMINA
+g03_a1_n	g03	a1_n	NANOPORE
+g03_a1_i	g03	a1_i	ILLUMINA
+g03_a2_n	g03	a2_n	NANOPORE
+g03_a2_i	g03	a2_i	ILLUMINA
+g04_a1_n	g04	a1_n	NANOPORE
+g04_a1_i	g04	a1_i	ILLUMINA
+g04_a2_n	g04	a2_n	NANOPORE
+g04_a2_i	g04	a2_i	ILLUMINA
+g05_a1_n	g05	a1_n	NANOPORE
+g05_a1_i	g05	a1_i	ILLUMINA
+g05_a2_n	g05	a2_n	NANOPORE
+g05_a2_i	g05	a2_i	ILLUMINA
