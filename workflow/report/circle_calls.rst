@@ -1,6 +1,6 @@
 {% set scenario_events = snakemake.config['filter']['fdr-control']['events'][snakemake.wildcards.event]['varlociraptor'] %}
 {% set fdr = snakemake.config['filter']['fdr-control']['threshold'] %}
-{% set mode = snakemake.config['filter']['fdr-control']['mode'].split(-) %}
+{% set mode = snakemake.config['filter']['fdr-control']['mode'].split("-") %}
 Circle calls for the **event {{snakemake.wildcards.event}}**, as defined in ``config/config.yaml`` (encompassing the varlociraptor scenario events: {{ scenario_events|join(", ") }} ).
 
 {% if "global" in mode %}
