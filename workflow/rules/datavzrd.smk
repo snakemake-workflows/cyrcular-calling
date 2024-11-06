@@ -57,7 +57,12 @@ rule datavzrd_circle_calls:
         report(
             directory("results/datavzrd-report/{group}.{event}.fdr-controlled"),
             htmlindex="index.html",
+            caption="../report/circle_calls.rst",
             category="Circle calls",
+            subcategory="{group}",
+            labels={
+                "event": "{event}",
+            }
         ),
     conda:
         "../envs/datavzrd.yaml"
