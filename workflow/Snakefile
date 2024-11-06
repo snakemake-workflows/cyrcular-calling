@@ -19,6 +19,7 @@ include: "rules/annotate.smk"
 include: "rules/filter.smk"
 include: "rules/plot.smk"
 include: "rules/datavzrd.smk"
+include: "rules/coverage.smk"
 
 
 rule all:

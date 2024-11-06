@@ -61,6 +61,10 @@ units = read_units()
 def get_all_input(wildcards):
     targets = []
     targets += expand(
+        "results/coverage/{sample}.mosdepth.summary.txt", 
+        sample=SAMPLES,
+    )
+    targets += expand(
         "results/datavzrd-report/{group}.{event}.fdr-controlled",
         group=GROUPS,
         event=EVENTS,
