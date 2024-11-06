@@ -16,6 +16,8 @@ rule get_genome:
         chromosome=lookup(dpath="reference/chromosome", within=config, default=[]),  # optional: restrict to one or multiple chromosomes
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     wrapper:
+        "v5.0.1/bio/reference/ensembl-sequence"
+
 
 rule genome_remove_chromosomes:
     input:
