@@ -3,7 +3,7 @@
 
 rule cyrcular_generate_tables:
     input:
-        reference=rules.get_genome.output.genome,
+        reference=rules.genome_remove_chromosomes.output.fastx,
         graph="results/circle_graphs/{group}.annotated.graph",
         bcf="results/circle_calls_fdr_filtered/reheader/{group}.{event}.bcf",
     output:
@@ -32,7 +32,7 @@ rule cyrcular_generate_tables:
 
 rule cyrcular_annotate_graph:
     input:
-        reference=rules.get_genome.output.genome,
+        reference=rules.genome_remove_chromosomes.output.fastx,
         graph="results/circle_graphs/{group}.graph",
         gene_annotation="resources/gene_annotation.gff3.gz",
         regulatory_annotation="resources/regulatory_annotation.gff3.gz",

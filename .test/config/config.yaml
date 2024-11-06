@@ -17,6 +17,9 @@ reference:
   chromosome:
     - "19"
     - "21"
+    - "MT"
+  exclude_chromosomes_regexes:
+    - "^M"
   repeat_masker_download_link: "http://www.repeatmasker.org/genomes/hg38/RepeatMasker-rm406-dfam2.0/hg38.fa.out.gz"
 
 

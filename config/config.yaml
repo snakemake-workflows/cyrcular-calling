@@ -9,6 +9,9 @@ reference:
   build: GRCh38
   # Ensembl release
   release: 107
+  exclude_chromosomes_regexes:
+    - "^KI"
+    - "^GL"
   # for available downloads, please browse either of these views:
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasets.html
   # * http://repeatmasker.org/genomicDatasets/RMGenomicDatasetsAlt.html

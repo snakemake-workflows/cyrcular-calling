@@ -16,16 +16,34 @@ rule get_genome:
         chromosome=lookup(dpath="reference/chromosome", within=config, default=[]),  # optional: restrict to one or multiple chromosomes
     cache: "omit-software"  # save space and time with between workflow caching (see docs)
     wrapper:
-        "v4.7.1/bio/reference/ensembl-sequence"
+
+rule genome_remove_chromosomes:
+    input:
+        fastx=rules.get_genome.output.genome,
+    output:
+        fastx=expand(
+            "resources/{species}.{build}.{release}.removed_chromosomes.fasta",
+            species=config["reference"]["species"],
+            build=config["reference"]["build"],
+            release=config["reference"]["release"],
+        ),
+    log:
+        "logs/resources/genome.remove_chromosomes.log",
+    params:
+        command="grep",
+        extra=f"--by-name --use-regexp --invert-match --pattern '^{"|".join(lookup(dpath="reference/exclude_chromosomes_regexes", within=config, default=["$"]))}'",
+    threads: 2
+    wrapper:
+        "v5.0.1/bio/seqkit"
 
 
 rule genome_faidx:
     input:
-        rules.get_genome.output.genome,
+        rules.genome_remove_chromosomes.output.fastx,
     output:
         index=expand(
             "{genome}.fai",
-            genome=rules.get_genome.output.genome,
+            genome=rules.genome_remove_chromosomes.output.fastx,
         ),
     log:
         "logs/genome-faidx.log",
@@ -36,7 +54,7 @@ rule genome_faidx:
 
 rule minimap2_index:
     input:
-        target=rules.get_genome.output.genome,
+        target=rules.genome_remove_chromosomes.output.fastx,
     output:
         index=expand(
             "resources/{species}.{build}.{release}.mmi",

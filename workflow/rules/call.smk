@@ -95,7 +95,7 @@ rule render_scenario:
 
 rule varlociraptor_alignment_properties:
     input:
-        ref=rules.get_genome.output.genome,
+        ref=rules.genome_remove_chromosomes.output.fastx,
         ref_idx=rules.genome_faidx.output.index,
         bam="results/mapped/{sample}.bam",
         bai="results/mapped/{sample}.bam.bai",
@@ -111,7 +111,7 @@ rule varlociraptor_alignment_properties:
 
 rule varlociraptor_preprocess:
     input:
-        ref=rules.get_genome.output.genome,
+        ref=rules.genome_remove_chromosomes.output.fastx,
         ref_idx=rules.genome_faidx.output.index,
         candidates=expand(
             "results/candidates/scattered/{group}.{{scatteritem}}.bcf",
@@ -174,7 +174,7 @@ rule cyrcular_call_circle_bnds:
     input:
         bam="results/mapped/{group}.nanopore_samples.sorted.bam",
         bai="results/mapped/{group}.nanopore_samples.sorted.bam.bai",
-        ref=rules.get_genome.output.genome,
+        ref=rules.genome_remove_chromosomes.output.fastx,
         ref_index=rules.genome_faidx.output.index,
     output:
         bnds="results/candidates/{group}.bcf",
