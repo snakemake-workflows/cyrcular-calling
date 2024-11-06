@@ -9,6 +9,8 @@ rule mosdepth_coverage:
         "logs/coverage/mosdepth_{sample}.log",
     params:
         extra="--no-per-base",  # optional
+    resources:
+        mem_mb=18000
     # additional decompression threads through `--threads`
     threads: 4  # This value - 1 will be sent to `--threads`
     wrapper:
