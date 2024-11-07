@@ -60,7 +60,7 @@ datasets:
 views:
   ?for category in params.categories:
     ?f"circles-{category}":
-      desc: ?f"""Overview table showing all discovered circles for category `{category}`.\n
+      desc: ?f"""Overview table showing all discovered circles for category `{category}` in group `{wildcards.group} for config event `{wildcards.event}`.\n
 
               | Column                | Description                                                                     |\n
               | --------------------- | ------------------------------------------------------------------------------- |\n
@@ -118,7 +118,7 @@ views:
   ?for group, circle, _ in params.detail_tables:
     ?f"detail-{group}-{circle}-segments":
       hidden: true
-      desc: ?f"""Detail table containing all covered segments and circle junctions for circle **{circle}** of group *{group}*.\n
+      desc: ?f"""Detail table containing all covered segments and circle junctions for circle **{circle}** of group **{group}**.\n
 
             | Column                | Description                                                                     |\n
             | --------------------- | ------------------------------------------------------------------------------- |\n
@@ -160,7 +160,8 @@ views:
 
   "summary-plot":
     desc: |
-      Circle length distributions by category. 
+      Overview of circles found for config event **{wildcards.event}** in group of samples **{wildcards.group}**.
+      Circle length distributions are plotted by category.
       Click on any of the bars to get to the respective category's overview table (or choose directly from the "views" dropdown menu).
 
       Categories are defined as follows:
@@ -170,7 +171,7 @@ views:
       | `coding`     | at least 1 exon                                                 | 
       | `regulatory` | not `coding` and at least 1 regulatory feature annotated        |
       | `intronic`   | neither `coding` nor `regulatory` and at least 1 gene annotated |
-      | `other`  | none of the above                                               |
+      | `other`      | none of the above                                               |
       
     dataset: ?f"overview-table"
     render-plot:
