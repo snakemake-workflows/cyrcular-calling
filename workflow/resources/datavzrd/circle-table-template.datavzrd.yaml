@@ -92,7 +92,6 @@ views:
               ?for sample_name in params.samples:
                 ?f"{sample_name}":
                   url: ?f"../qc_plots/graph_{{graph_id}}_{{value}}_{sample_name}.html"
-#            custom-path: ?input.circle_qc_plot_link_formatter
           "regions":
             custom: ?regions_links
           "regex('prob_(.+)')":
@@ -145,7 +144,10 @@ views:
           "graph_id":
             custom-path: ?input.graph_link_formatter
           "circle_id":
-            custom-path: ?input.circle_qc_plot_link_formatter
+            link-to-url:
+              ?for sample_name in params.samples:
+                ?f"{sample_name}":
+                  url: ?f"../qc_plots/graph_{{graph_id}}_{{value}}_{sample_name}.html"
           "kind":
             plot:
               heatmap:
