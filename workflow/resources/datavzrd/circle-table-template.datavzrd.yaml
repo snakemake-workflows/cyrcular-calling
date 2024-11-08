@@ -136,7 +136,6 @@ views:
             | `coverage`            | Mean read depth for the edge in the circle                                      |\n
             | `num_split_reads`     | Number of split reads for the edge in the circle                                |\n
             | `breakpoint_sequence` | Link to a NCBI primer-blast with form's fields pre-filled                       |\n
-
             """
       dataset: ?f"data-{group}-{circle}-segments"
       render-table:
@@ -161,19 +160,20 @@ views:
             display-mode: hidden
 
   "summary-plot":
-    desc: |
-      Overview of circles found for config event **{wildcards.event}** in group of samples **{wildcards.group}**.
+    desc: ?f"""
+      Overview of circles found for config event **{wildcards.event}** in group of samples **{wildcards.group}**.\n
       Circle length distributions are plotted by category.
-      Click on any of the bars to get to the respective category's overview table (or choose directly from the "views" dropdown menu).
+      Click on any of the bars to get to the respective category's overview table (or choose directly from the "views" dropdown menu).\n
 
-      Categories are defined as follows:
+      Categories are defined as follows:\n
 
-      | Category     | Condition                                                       |
-      | ------------ | --------------------------------------------------------------- |
-      | `coding`     | at least 1 exon                                                 | 
-      | `regulatory` | not `coding` and at least 1 regulatory feature annotated        |
-      | `intronic`   | neither `coding` nor `regulatory` and at least 1 gene annotated |
-      | `other`      | none of the above                                               |
+      | Category     | Condition                                                       |\n
+      | ------------ | --------------------------------------------------------------- |\n
+      | `coding`     | at least 1 exon                                                 |\n
+      | `regulatory` | not `coding` and at least 1 regulatory feature annotated        |\n
+      | `intronic`   | neither `coding` nor `regulatory` and at least 1 gene annotated |\n
+      | `other`      | none of the above                                               |\n
+      """
       
     dataset: ?f"overview-table"
     render-plot:
