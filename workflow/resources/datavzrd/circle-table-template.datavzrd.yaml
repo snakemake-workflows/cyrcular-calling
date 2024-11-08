@@ -121,7 +121,7 @@ views:
       hidden: true
       desc: ?f"""
         Detail table containing all covered segments and circle junctions for circle **{circle}** of group **{group}**.\n
-        This circle was called as config event **{wilcards.event}**, consisting of the scenario events `{", ".join(params.scenario_events)}`.\n
+        This circle was called as config event **{wildcards.event}**, consisting of the scenario events `{", ".join(params.scenario_events)}`.\n
 
             | Column                | Description                                                                     |\n
             | --------------------- | ------------------------------------------------------------------------------- |\n
