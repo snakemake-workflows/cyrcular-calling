@@ -60,7 +60,9 @@ datasets:
 views:
   ?for category in params.categories:
     ?f"circles-{category}":
-      desc: ?f"""Overview table showing all discovered circles for category `{category}` in group `{wildcards.group} for config event `{wildcards.event}`.\n
+      desc: ?f"""
+        Overview table showing all discovered circles for category **{category}** in group **{wildcards.group}** for config event **{wildcards.event}**.\n
+        This event considers the sum of the probabilities of the varlociraptor scenario events `{", ".join(params.scenario_events)}`.\n
 
               | Column                | Description                                                                     |\n
               | --------------------- | ------------------------------------------------------------------------------- |\n
@@ -117,7 +119,9 @@ views:
   ?for group, circle, _ in params.detail_tables:
     ?f"detail-{group}-{circle}-segments":
       hidden: true
-      desc: ?f"""Detail table containing all covered segments and circle junctions for circle **{circle}** of group **{group}**.\n
+      desc: ?f"""
+        Detail table containing all covered segments and circle junctions for circle **{circle}** of group **{group}**.\n
+        This circle was called as event **{wilcards.event}**, consisting of the scenario events `{", ".join(params.scenario_events)}`.\n
 
             | Column                | Description                                                                     |\n
             | --------------------- | ------------------------------------------------------------------------------- |\n
@@ -162,6 +166,8 @@ views:
   "summary-plot":
     desc: ?f"""
       Overview of circles found for config event **{wildcards.event}** in group of samples **{wildcards.group}**.\n
+      This event considers the sum of the probabilities of the varlociraptor scenario events `{", ".join(params.scenario_events)}`.\n
+
       Circle length distributions are plotted by category.
       Click on any of the bars to get to the respective category's overview table (or choose directly from the "views" dropdown menu).\n
 

@@ -35,6 +35,7 @@ rule render_datavzrd_config:
             wc, input
         ),
         samples=lookup(query="group == '{group}'", cols="sample_name", within=samples),
+        scenario_events=lambda wc: lookup(dpath=f"filter/fdr-control/events/{wc.event}/varlociraptor", within=config)
     log:
         "logs/datavzrd_render/{group}.{event}.log",
     template_engine:
